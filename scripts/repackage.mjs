@@ -1,0 +1,667 @@
+import { cp, mkdtemp, readFile, readdir, writeFile } from "node:fs/promises";
+import { basename, join, resolve } from "node:path";
+import plist from "plist";
+import * as asar from "@electron/asar";
+import {
+  DEFAULT_APPCAST_URL,
+  PROJECT_ROOT,
+  copyFileWithMode,
+  downloadFile,
+  ensureDir,
+  fail,
+  fetchReleaseIndex,
+  findExecutableOnPath,
+  info,
+  mapNodeArchToElectronArch,
+  pathExists,
+  removeIfExists,
+  requireBuildDependencies,
+  run,
+  selectRelease,
+  warn,
+  writeExecutable,
+} from "./shared.mjs";
+
+function parseArgs(argv) {
+  const options = {
+    appcastUrl: DEFAULT_APPCAST_URL,
+    cacheDir: resolve(PROJECT_ROOT, ".cache"),
+    force: false,
+    keepWorkDir: false,
+    outputDir: null,
+    sourceZip: null,
+    version: null,
+    workDir: null,
+  };
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const argument = argv[index];
+    switch (argument) {
+      case "--version":
+        options.version = argv[index + 1] ?? null;
+        index += 1;
+        break;
+      case "--zip":
+        options.sourceZip = resolve(argv[index + 1] ?? "");
+        index += 1;
+        break;
+      case "--output-dir":
+        options.outputDir = resolve(argv[index + 1] ?? "");
+        index += 1;
+        break;
+      case "--cache-dir":
+        options.cacheDir = resolve(argv[index + 1] ?? "");
+        index += 1;
+        break;
+      case "--work-dir":
+        options.workDir = resolve(argv[index + 1] ?? "");
+        index += 1;
+        break;
+      case "--appcast-url":
+        options.appcastUrl = argv[index + 1] ?? DEFAULT_APPCAST_URL;
+        index += 1;
+        break;
+      case "--force":
+        options.force = true;
+        break;
+      case "--keep-work-dir":
+        options.keepWorkDir = true;
+        break;
+      default:
+        fail(`Unknown argument: ${argument}`);
+    }
+  }
+
+  return options;
+}
+
+function relativeParts(moduleId) {
+  return moduleId.split("/").filter(Boolean);
+}
+
+async function collectDirectReleaseArtifacts(moduleRoot) {
+  const artifacts = [];
+  const releaseDir = join(moduleRoot, "build", "Release");
+  if (await pathExists(releaseDir)) {
+    for (const entry of await readdir(releaseDir, { withFileTypes: true })) {
+      if (entry.isFile()) {
+        artifacts.push(join("build", "Release", entry.name));
+      }
+    }
+  }
+
+  const prebuildsDir = join(moduleRoot, "prebuilds");
+  if (await pathExists(prebuildsDir)) {
+    for (const platformDir of await readdir(prebuildsDir, { withFileTypes: true })) {
+      if (!platformDir.isDirectory()) {
+        continue;
+      }
+      const platformPath = join(prebuildsDir, platformDir.name);
+      for (const entry of await readdir(platformPath, { withFileTypes: true })) {
+        if (entry.isFile()) {
+          artifacts.push(join("prebuilds", platformDir.name, entry.name));
+        }
+      }
+    }
+  }
+
+  return artifacts.sort();
+}
+
+async function collectNativeModuleCandidates(nodeModulesDir) {
+  const candidates = [];
+
+  async function maybeAddModule(moduleId, moduleRoot) {
+    const releaseArtifacts = await collectDirectReleaseArtifacts(moduleRoot);
+    if (releaseArtifacts.length > 0) {
+      candidates.push({
+        moduleId,
+        moduleRoot,
+        releaseArtifacts,
+      });
+    }
+  }
+
+  for (const entry of await readdir(nodeModulesDir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) {
+      continue;
+    }
+
+    if (entry.name.startsWith("@")) {
+      const scopeRoot = join(nodeModulesDir, entry.name);
+      for (const scopedEntry of await readdir(scopeRoot, { withFileTypes: true })) {
+        if (!scopedEntry.isDirectory()) {
+          continue;
+        }
+        await maybeAddModule(
+          `${entry.name}/${scopedEntry.name}`,
+          join(scopeRoot, scopedEntry.name),
+        );
+      }
+      continue;
+    }
+
+    await maybeAddModule(entry.name, join(nodeModulesDir, entry.name));
+  }
+
+  return candidates.sort((left, right) => left.moduleId.localeCompare(right.moduleId));
+}
+
+function readJsonFromAsar(archivePath, filePath) {
+  return JSON.parse(asar.extractFile(archivePath, filePath).toString("utf8"));
+}
+
+async function discoverNativeModules(appAsarPath, unpackedDir) {
+  const nodeModulesDir = join(unpackedDir, "node_modules");
+  if (!(await pathExists(nodeModulesDir))) {
+    return [];
+  }
+
+  const modules = [];
+  for (const candidate of await collectNativeModuleCandidates(nodeModulesDir)) {
+    const packageJsonPath = `node_modules/${candidate.moduleId}/package.json`;
+    const packageJson = readJsonFromAsar(appAsarPath, packageJsonPath);
+    modules.push({
+      moduleId: candidate.moduleId,
+      version: String(packageJson.version),
+      releaseArtifacts: candidate.releaseArtifacts,
+    });
+  }
+
+  return modules;
+}
+
+function buildCodexWrapper() {
+  return `#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ -n "\${CODEX_APP_SYSTEM_CODEX:-}" ]]; then
+  exec "\${CODEX_APP_SYSTEM_CODEX}" "$@"
+fi
+
+if command -v codex >/dev/null 2>&1; then
+  target="$(command -v codex)"
+  if [[ "$(realpath "$target")" != "$(realpath "$0")" ]]; then
+    exec "$target" "$@"
+  fi
+fi
+
+echo "Codex CLI not found. Install @openai/codex or set CODEX_APP_SYSTEM_CODEX." >&2
+exit 127
+`;
+}
+
+function buildRipgrepWrapper() {
+  return `#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ -n "\${CODEX_APP_SYSTEM_RG:-}" ]]; then
+  exec "\${CODEX_APP_SYSTEM_RG}" "$@"
+fi
+
+if command -v rg >/dev/null 2>&1; then
+  target="$(command -v rg)"
+  if [[ "$(realpath "$target")" != "$(realpath "$0")" ]]; then
+    exec "$target" "$@"
+  fi
+fi
+
+echo "ripgrep not found. Install rg or set CODEX_APP_SYSTEM_RG." >&2
+exit 127
+`;
+}
+
+function buildStartScript() {
+  return `#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
+export PATH="\${ROOT_DIR}/resources:\${PATH}"
+export CODEX_CLI_PATH="\${CODEX_CLI_PATH:-\${ROOT_DIR}/resources/codex}"
+WEBVIEW_PORT="\${CODEX_APP_WEBVIEW_PORT:-5175}"
+export ELECTRON_RENDERER_URL="\${ELECTRON_RENDERER_URL:-http://127.0.0.1:\${WEBVIEW_PORT}}"
+
+WEBVIEW_DIR="\${ROOT_DIR}/content/webview"
+WEBVIEW_PID=""
+
+cleanup() {
+  if [[ -n "\${WEBVIEW_PID}" ]]; then
+    kill "\${WEBVIEW_PID}" >/dev/null 2>&1 || true
+    wait "\${WEBVIEW_PID}" >/dev/null 2>&1 || true
+  fi
+}
+
+check_webview_host() {
+  local host="$1"
+  if { exec 3<>"/dev/tcp/\${host}/\${WEBVIEW_PORT}"; } 2>/dev/null; then
+    exec 3>&-
+    exec 3<&-
+    return 0
+  fi
+  return 1
+}
+
+wait_for_webview() {
+  local attempt
+  for attempt in {1..50}; do
+    if [[ -n "\${WEBVIEW_PID}" ]] && ! kill -0 "\${WEBVIEW_PID}" >/dev/null 2>&1; then
+      return 1
+    fi
+    if check_webview_host 127.0.0.1 && check_webview_host localhost; then
+      return 0
+    fi
+    sleep 0.1
+  done
+  return 1
+}
+
+trap cleanup EXIT INT TERM HUP
+
+if [[ -d "\${WEBVIEW_DIR}" ]]; then
+  ELECTRON_RUN_AS_NODE=1 "\${ROOT_DIR}/electron" "\${ROOT_DIR}/serve-webview.mjs" "\${WEBVIEW_DIR}" "\${WEBVIEW_PORT}" &
+  WEBVIEW_PID=$!
+  if ! wait_for_webview; then
+    echo "Failed to start the local Codex webview server on port \${WEBVIEW_PORT}." >&2
+    exit 1
+  fi
+  sleep 0.5
+fi
+
+if "\${ROOT_DIR}/electron" --no-sandbox "$@"; then
+  exit_code=0
+else
+  exit_code=$?
+fi
+
+exit "\${exit_code}"
+`;
+}
+
+function buildWebviewServerScript() {
+  return `import { createServer } from "node:http";
+import { createReadStream } from "node:fs";
+import { stat } from "node:fs/promises";
+import { extname, join, resolve, sep } from "node:path";
+
+const root = resolve(process.argv[2] ?? ".");
+const port = Number(process.argv[3] ?? "5175");
+
+const mimeTypes = new Map([
+  [".css", "text/css; charset=utf-8"],
+  [".html", "text/html; charset=utf-8"],
+  [".ico", "image/x-icon"],
+  [".js", "text/javascript; charset=utf-8"],
+  [".json", "application/json; charset=utf-8"],
+  [".png", "image/png"],
+  [".svg", "image/svg+xml"],
+  [".txt", "text/plain; charset=utf-8"],
+  [".wasm", "application/wasm"],
+  [".wav", "audio/wav"],
+  [".woff", "font/woff"],
+  [".woff2", "font/woff2"],
+]);
+
+function resolveRequestPath(urlString) {
+  const url = new URL(urlString, "http://127.0.0.1");
+  const decodedPath = decodeURIComponent(url.pathname);
+  const relativePath = decodedPath === "/" ? "index.html" : decodedPath.replace(/^\\//, "");
+  const candidate = resolve(root, relativePath);
+  if (candidate !== root && !candidate.startsWith(root + sep)) {
+    throw new Error("Forbidden");
+  }
+  return candidate;
+}
+
+async function handleRequest(request, response) {
+  let filePath;
+  try {
+    filePath = resolveRequestPath(request.url ?? "/");
+  } catch {
+    response.statusCode = 403;
+    response.end("Forbidden");
+    return;
+  }
+
+  try {
+    let fileStats = await stat(filePath);
+    if (fileStats.isDirectory()) {
+      filePath = join(filePath, "index.html");
+      fileStats = await stat(filePath);
+    }
+
+    response.statusCode = 200;
+    response.setHeader(
+      "Content-Type",
+      mimeTypes.get(extname(filePath)) ?? "application/octet-stream",
+    );
+    response.setHeader("Content-Length", String(fileStats.size));
+    createReadStream(filePath).pipe(response);
+  } catch {
+    response.statusCode = 404;
+    response.end("Not found");
+  }
+}
+
+async function listenOnHost(host) {
+  const server = createServer(handleRequest);
+  return await new Promise((resolvePromise, rejectPromise) => {
+    server.once("error", (error) => {
+      if (error && typeof error === "object" && error.code === "EADDRINUSE") {
+        resolvePromise({ host, server: null, reused: true });
+        return;
+      }
+      if (error && typeof error === "object" && error.code === "EADDRNOTAVAIL") {
+        resolvePromise({ host, server: null, unavailable: true });
+        return;
+      }
+      rejectPromise(error);
+    });
+    server.listen(port, host, () => {
+      resolvePromise({ host, server, reused: false, unavailable: false });
+    });
+  });
+}
+
+const listeners = await Promise.all([listenOnHost("127.0.0.1"), listenOnHost("::1")]);
+const activeServers = listeners
+  .map((listener) => listener.server)
+  .filter((server) => server != null);
+
+if (activeServers.length === 0 && listeners.every((listener) => listener.reused !== true)) {
+  console.error(\`Failed to listen on any loopback address for port \${port}.\`);
+  process.exit(1);
+}
+
+for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
+  process.on(signal, () => {
+    let pending = activeServers.length;
+    if (pending === 0) {
+      process.exit(0);
+      return;
+    }
+    for (const server of activeServers) {
+      server.close(() => {
+        pending -= 1;
+        if (pending === 0) {
+          process.exit(0);
+        }
+      });
+    }
+  });
+}
+`;
+}
+
+async function createBuildWorkspace(buildDir, electronVersion, nativeModules) {
+  await ensureDir(buildDir);
+  await writeFile(
+    join(buildDir, "package.json"),
+    JSON.stringify(
+      {
+        private: true,
+      },
+      null,
+      2,
+    ),
+  );
+
+  const installArgs = ["install", "--no-package-lock", "--ignore-scripts", `electron@${electronVersion}`];
+  for (const nativeModule of nativeModules) {
+    installArgs.push(`${nativeModule.moduleId}@${nativeModule.version}`);
+  }
+
+  info(`Installing rebuild workspace dependencies in ${buildDir}`);
+  await run("npm", installArgs, {
+    cwd: buildDir,
+  });
+
+  const rebuildCli = join(
+    PROJECT_ROOT,
+    "node_modules",
+    "@electron",
+    "rebuild",
+    "lib",
+    "cli.js",
+  );
+  const rebuildArgs = [
+    rebuildCli,
+    "-f",
+    "-v",
+    electronVersion,
+    "-m",
+    buildDir,
+    "-w",
+    nativeModules.map((nativeModule) => nativeModule.moduleId).join(","),
+  ];
+
+  info(`Rebuilding native modules for Electron ${electronVersion}`);
+  await run("node", rebuildArgs, {
+    cwd: buildDir,
+  });
+}
+
+async function replaceNativeArtifacts(builtNodeModulesDir, outputUnpackedDir, nativeModules) {
+  const missingArtifacts = [];
+
+  for (const nativeModule of nativeModules) {
+    const builtModuleRoot = join(builtNodeModulesDir, ...relativeParts(nativeModule.moduleId));
+    const outputModuleRoot = join(outputUnpackedDir, "node_modules", ...relativeParts(nativeModule.moduleId));
+
+    for (const relativeArtifact of nativeModule.releaseArtifacts) {
+      const source = join(builtModuleRoot, relativeArtifact);
+      const destination = join(outputModuleRoot, relativeArtifact);
+      if (!(await pathExists(source))) {
+        if (relativeArtifact.endsWith("spawn-helper")) {
+          continue;
+        }
+        missingArtifacts.push(`${nativeModule.moduleId}:${relativeArtifact}`);
+        continue;
+      }
+      await copyFileWithMode(source, destination);
+    }
+  }
+
+  return missingArtifacts;
+}
+
+async function main() {
+  const options = parseArgs(process.argv.slice(2));
+
+  if (process.platform !== "linux") {
+    fail("This builder currently only supports running on Linux.");
+  }
+
+  await requireBuildDependencies();
+
+  await ensureDir(options.cacheDir);
+  await ensureDir(join(options.cacheDir, "work"));
+
+  let release = null;
+  let sourceZipPath = options.sourceZip;
+  if (sourceZipPath == null) {
+    const releases = await fetchReleaseIndex(options.appcastUrl);
+    release = selectRelease(releases, options.version);
+    const cacheZipPath = join(
+      options.cacheDir,
+      "downloads",
+      basename(new URL(release.enclosureUrl).pathname),
+    );
+    const downloaded = await downloadFile(release.enclosureUrl, cacheZipPath);
+    info(
+      downloaded
+        ? `Downloaded upstream archive to ${cacheZipPath}`
+        : `Using cached upstream archive ${cacheZipPath}`,
+    );
+    sourceZipPath = cacheZipPath;
+  } else if (!(await pathExists(sourceZipPath))) {
+    fail(`Zip file does not exist: ${sourceZipPath}`);
+  }
+
+  const workDir =
+    options.workDir ??
+    (await mkdtemp(join(options.cacheDir, "work", "codex-")));
+  await ensureDir(workDir);
+
+  try {
+    const extractedZipDir = join(workDir, "upstream");
+    await ensureDir(extractedZipDir);
+    info(`Extracting ${basename(sourceZipPath)} into ${extractedZipDir}`);
+    await run("unzip", ["-q", sourceZipPath, "-d", extractedZipDir]);
+
+    const appContentsDir = join(extractedZipDir, "Codex.app", "Contents");
+    const upstreamResourcesDir = join(appContentsDir, "Resources");
+    const upstreamUnpackedDir = join(upstreamResourcesDir, "app.asar.unpacked");
+    const upstreamAsarPath = join(upstreamResourcesDir, "app.asar");
+
+    const appInfo = plist.parse(await readFile(join(appContentsDir, "Info.plist"), "utf8"));
+    const electronFrameworkInfo = plist.parse(
+      await readFile(
+        join(
+          appContentsDir,
+          "Frameworks",
+          "Electron Framework.framework",
+          "Versions",
+          "A",
+          "Resources",
+          "Info.plist",
+        ),
+        "utf8",
+      ),
+    );
+
+    const packageJson = readJsonFromAsar(upstreamAsarPath, "package.json");
+    const nativeModules = await discoverNativeModules(upstreamAsarPath, upstreamUnpackedDir);
+    if (nativeModules.length === 0) {
+      fail("No rebuildable native modules were discovered in app.asar.unpacked.");
+    }
+
+    const appVersion = String(appInfo.CFBundleShortVersionString ?? packageJson.version);
+    const buildVersion = String(appInfo.CFBundleVersion ?? release?.buildVersion ?? "unknown");
+    const electronVersion = String(
+      electronFrameworkInfo.CFBundleShortVersionString ??
+        electronFrameworkInfo.CFBundleVersion,
+    );
+    const outputDir =
+      options.outputDir ?? resolve(PROJECT_ROOT, "out", `codex-linux-${appVersion}`);
+
+    if (await pathExists(outputDir)) {
+      if (!options.force) {
+        fail(`Output directory already exists: ${outputDir}. Use --force to replace it.`);
+      }
+      await removeIfExists(outputDir);
+    }
+
+    const electronArch = mapNodeArchToElectronArch(process.arch);
+    const electronZipUrl = `https://github.com/electron/electron/releases/download/v${electronVersion}/electron-v${electronVersion}-linux-${electronArch}.zip`;
+    const electronZipPath = join(
+      options.cacheDir,
+      "downloads",
+      basename(new URL(electronZipUrl).pathname),
+    );
+    const downloadedElectron = await downloadFile(electronZipUrl, electronZipPath);
+    info(
+      downloadedElectron
+        ? `Downloaded Electron runtime to ${electronZipPath}`
+        : `Using cached Electron runtime ${electronZipPath}`,
+    );
+
+    info(`Extracting Electron runtime into ${outputDir}`);
+    await ensureDir(outputDir);
+    await run("unzip", ["-q", electronZipPath, "-d", outputDir]);
+
+    const rebuiltUnpackedDir = join(workDir, "rebuilt-app.asar.unpacked");
+    await cp(upstreamUnpackedDir, rebuiltUnpackedDir, {
+      recursive: true,
+      force: true,
+    });
+
+    const nativeBuildDir = join(workDir, "native-build");
+    await createBuildWorkspace(nativeBuildDir, electronVersion, nativeModules);
+    const missingArtifacts = await replaceNativeArtifacts(
+      join(nativeBuildDir, "node_modules"),
+      rebuiltUnpackedDir,
+      nativeModules,
+    );
+    if (missingArtifacts.length > 0) {
+      warn(`Some upstream native artifacts were not replaced: ${missingArtifacts.join(", ")}`);
+    }
+
+    const outputResourcesDir = join(outputDir, "resources");
+    await cp(upstreamResourcesDir, outputResourcesDir, {
+      recursive: true,
+      force: true,
+    });
+    await cp(rebuiltUnpackedDir, join(outputResourcesDir, "app.asar.unpacked"), {
+      recursive: true,
+      force: true,
+    });
+
+    const defaultAppAsar = join(outputResourcesDir, "default_app.asar");
+    if (await pathExists(defaultAppAsar)) {
+      await removeIfExists(defaultAppAsar);
+    }
+
+    const extractedAsarDir = join(workDir, "asar");
+    asar.extractAll(upstreamAsarPath, extractedAsarDir);
+    const extractedWebviewDir = join(extractedAsarDir, "webview");
+    if (await pathExists(extractedWebviewDir)) {
+      await cp(extractedWebviewDir, join(outputDir, "content", "webview"), {
+        recursive: true,
+        force: true,
+      });
+    } else {
+      warn("No webview directory was found inside app.asar.");
+    }
+
+    await writeExecutable(join(outputResourcesDir, "codex"), buildCodexWrapper());
+    await writeExecutable(join(outputResourcesDir, "rg"), buildRipgrepWrapper());
+    await writeExecutable(join(outputDir, "start.sh"), buildStartScript());
+    await writeExecutable(join(outputDir, "serve-webview.mjs"), buildWebviewServerScript());
+
+    const manifest = {
+      builtAt: new Date().toISOString(),
+      appVersion,
+      buildVersion,
+      electronVersion,
+      source: release ?? {
+        shortVersion: options.version ?? appVersion,
+        enclosureUrl: sourceZipPath,
+      },
+      nativeModules: nativeModules.map((nativeModule) => ({
+        moduleId: nativeModule.moduleId,
+        version: nativeModule.version,
+        replacedArtifacts: nativeModule.releaseArtifacts,
+      })),
+      runtimeWrappers: {
+        codex: "resources/codex",
+        rg: "resources/rg",
+      },
+      renderer: {
+        webviewDir: "content/webview",
+        url: "http://127.0.0.1:5175",
+      },
+    };
+    await writeFile(
+      join(outputDir, "codex-linux-manifest.json"),
+      JSON.stringify(manifest, null, 2),
+    );
+
+    if ((await findExecutableOnPath("codex")) == null) {
+      warn("No system codex CLI found on PATH; the packaged app will need CODEX_APP_SYSTEM_CODEX or a codex install.");
+    }
+    if ((await findExecutableOnPath("rg")) == null) {
+      warn("No system rg found on PATH; the packaged app will need CODEX_APP_SYSTEM_RG or ripgrep installed.");
+    }
+
+    info(`Built Linux package in ${outputDir}`);
+    info(`Launch with ${join(outputDir, "start.sh")}`);
+  } finally {
+    if (options.keepWorkDir || options.workDir != null) {
+      info(`Keeping work directory at ${workDir}`);
+    } else {
+      await removeIfExists(workDir);
+    }
+  }
+}
+
+await main();
