@@ -45,6 +45,12 @@ Smoke-test the packaged app launch path:
 npm run smoke-test
 ```
 
+Extract the bundled automation templates and related automation UI text into a repo directory:
+
+```bash
+npm run extract-automation-examples -- --version 26.305.950
+```
+
 Install the current build as a desktop app for the current user:
 
 ```bash
@@ -86,6 +92,7 @@ The build output contains:
 
 ## Notes
 
+- `npm run extract-automation-examples` reads the compiled webview bundles from a built output and rewrites `automation-examples/` with the latest extracted template set. The upstream app version stays inside the generated metadata files, so Git can track prompt changes without nesting by version.
 - The upstream bundle currently ships native modules for `better-sqlite3` and `node-pty`. The builder discovers those from `app.asar.unpacked` and rebuilds them for the Linux Electron runtime.
 - `start.sh` launches a local HTTP server for the extracted `webview/` assets on `127.0.0.1:5175` before starting Electron, then tears that server down when the app exits.
 - `npm run smoke-test` verifies the rebuilt native modules are Linux ELFs and that `start.sh` brings the local renderer up and back down cleanly.

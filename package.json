@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Repackage the upstream macOS Codex desktop app to run on Linux.",
   "scripts": {
+    "extract-automation-examples": "node scripts/extract-automation-examples.mjs",
     "install-desktop": "node scripts/install-desktop.mjs",
     "release-info": "node scripts/release-info.mjs",
     "repackage": "node scripts/repackage.mjs",
