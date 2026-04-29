@@ -211,13 +211,31 @@ async function terminateChild(child) {
     }));
   }
 
-  child.kill("SIGTERM");
+  signalChildGroup(child, "SIGTERM");
   try {
     return await waitForExit(child, 5000);
   } catch {
-    child.kill("SIGKILL");
+    signalChildGroup(child, "SIGKILL");
     return await waitForExit(child, 5000);
   }
+}
+
+function signalChildGroup(child, signal) {
+  if (child.pid == null) {
+    return;
+  }
+
+  try {
+    process.kill(-child.pid, signal);
+    return;
+  } catch (error) {
+    if (error?.code !== "ESRCH") {
+      child.kill(signal);
+      return;
+    }
+  }
+
+  child.kill(signal);
 }
 
 async function main() {
@@ -283,6 +301,7 @@ async function main() {
 
   const child = spawn(startScriptPath, [`--user-data-dir=${userDataDir}`], {
     cwd: outputDir,
+    detached: true,
     env: {
       ...process.env,
       CODEX_APP_WEBVIEW_PORT: String(webviewPort),

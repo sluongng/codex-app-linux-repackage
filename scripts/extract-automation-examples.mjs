@@ -10,7 +10,7 @@ import {
 } from "./shared.mjs";
 
 const AUTOMATION_TEMPLATE_RE =
-  /\{id:`([^`]+)`,promptMessage:\{id:`([^`]+)`,defaultMessage:`([^`]*)`,description:`([^`]*)`\},automationPromptMessage:\{id:`([^`]+)`,defaultMessage:`([^`]*)`,description:`([^`]*)`\},iconName:`([^`]+)`,mode:`([^`]+)`,isAutomation:!0\}/gs;
+  /\{id:`([^`]+)`,promptMessage:(?:[\w$]+\()?\{id:`([^`]+)`,defaultMessage:`([^`]*)`,description:`([^`]*)`\}\)?,automationPromptMessage:(?:[\w$]+\()?\{id:`([^`]+)`,defaultMessage:`([^`]*)`,description:`([^`]*)`\}\)?,iconName:`([^`]+)`,mode:`([^`]+)`,isAutomation:!0\}/gs;
 
 const AUTOMATION_MESSAGE_RE =
   /id:`settings\.automations\.([^`]+)`,defaultMessage:`([^`]*)`,description:`([^`]*)`/g;
@@ -225,7 +225,7 @@ async function main() {
   );
   const dialogAsset = await findAssetBySource(
     outputDir,
-    (entry) => /^automation-dialog-.*\.js$/i.test(entry),
+    (entry) => /^(automation-dialog|index)-.*\.js$/i.test(entry),
     (source) => source.includes("settings.automations.") && source.includes("promptPlaceholder"),
     "automation dialog bundle",
   );

@@ -1,42 +1,144 @@
 {
-  "appVersion": "26.305.950",
-  "extractedAt": "2026-03-09T10:34:19.717Z",
-  "sourceAsset": "out/codex-linux-26.305.950/content/webview/assets/automation-dialog-BIAeyC_e.js",
+  "appVersion": "26.422.71525",
+  "extractedAt": "2026-04-29T12:16:34.382Z",
+  "sourceAsset": "out/codex-linux-26.422.71525/content/webview/assets/index-D-3V455n.js",
   "sourceType": "compiled-webview-dialog-bundle",
-  "messageCount": 42,
+  "messageCount": 103,
   "messages": [
     {
-      "description": "Subtitle shown under the create automation title",
-      "key": "dialog.subtitle",
-      "message": "Automate recurring tasks in the background. Codex adds findings to the inbox, or automatically archives the task if there's nothing to report. <learnMoreLink>Learn more</learnMoreLink>",
-      "messageId": "settings.automations.dialog.subtitle"
+      "description": "Tooltip on the disabled automation create button combining all missing requirements",
+      "key": "saveTooltip.combined.create",
+      "message": "{requirements} to create",
+      "messageId": "settings.automations.saveTooltip.combined.create"
     },
     {
-      "description": "Segmented toggle label for daily schedule",
+      "description": "Tooltip on the disabled automation save button combining all missing requirements",
+      "key": "saveTooltip.combined.save",
+      "message": "{requirements} to save",
+      "messageId": "settings.automations.saveTooltip.combined.save"
+    },
+    {
+      "description": "Tooltip requirement shown first when the automation title is missing",
+      "key": "saveTooltip.name.initial",
+      "message": "Create title",
+      "messageId": "settings.automations.saveTooltip.name.initial"
+    },
+    {
+      "description": "Tooltip requirement shown after the first item when the automation title is missing",
+      "key": "saveTooltip.name.continuation",
+      "message": "create title",
+      "messageId": "settings.automations.saveTooltip.name.continuation"
+    },
+    {
+      "description": "Tooltip requirement shown first when the automation prompt is missing",
+      "key": "saveTooltip.prompt.initial",
+      "message": "Add prompt",
+      "messageId": "settings.automations.saveTooltip.prompt.initial"
+    },
+    {
+      "description": "Tooltip requirement shown after the first item when the automation prompt is missing",
+      "key": "saveTooltip.prompt.continuation",
+      "message": "add prompt",
+      "messageId": "settings.automations.saveTooltip.prompt.continuation"
+    },
+    {
+      "description": "Tooltip requirement shown first when the automation project selection is missing",
+      "key": "saveTooltip.cwd.initial",
+      "message": "Select project",
+      "messageId": "settings.automations.saveTooltip.cwd.initial"
+    },
+    {
+      "description": "Tooltip requirement shown after the first item when the automation project selection is missing",
+      "key": "saveTooltip.cwd.continuation",
+      "message": "select project",
+      "messageId": "settings.automations.saveTooltip.cwd.continuation"
+    },
+    {
+      "description": "Tooltip requirement shown first when the heartbeat automation thread selection is missing",
+      "key": "saveTooltip.thread.initial",
+      "message": "Select chat",
+      "messageId": "settings.automations.saveTooltip.thread.initial"
+    },
+    {
+      "description": "Tooltip requirement shown after the first item when the heartbeat automation thread selection is missing",
+      "key": "saveTooltip.thread.continuation",
+      "message": "select chat",
+      "messageId": "settings.automations.saveTooltip.thread.continuation"
+    },
+    {
+      "description": "Tooltip requirement shown first when the automation execution environment is missing",
+      "key": "saveTooltip.executionEnvironment.initial",
+      "message": "Choose where to run it",
+      "messageId": "settings.automations.saveTooltip.executionEnvironment.initial"
+    },
+    {
+      "description": "Tooltip requirement shown after the first item when the automation execution environment is missing",
+      "key": "saveTooltip.executionEnvironment.continuation",
+      "message": "choose where to run it",
+      "messageId": "settings.automations.saveTooltip.executionEnvironment.continuation"
+    },
+    {
+      "description": "Tooltip requirement shown first when the automation model is missing",
+      "key": "saveTooltip.model.initial",
+      "message": "Choose a model",
+      "messageId": "settings.automations.saveTooltip.model.initial"
+    },
+    {
+      "description": "Tooltip requirement shown after the first item when the automation model is missing",
+      "key": "saveTooltip.model.continuation",
+      "message": "choose a model",
+      "messageId": "settings.automations.saveTooltip.model.continuation"
+    },
+    {
+      "description": "Tooltip requirement shown first when the automation schedule is invalid",
+      "key": "saveTooltip.schedule.initial",
+      "message": "Fix the schedule",
+      "messageId": "settings.automations.saveTooltip.schedule.initial"
+    },
+    {
+      "description": "Tooltip requirement shown after the first item when the automation schedule is invalid",
+      "key": "saveTooltip.schedule.continuation",
+      "message": "fix the schedule",
+      "messageId": "settings.automations.saveTooltip.schedule.continuation"
+    },
+    {
+      "description": "Dropdown label for an hourly automation schedule",
+      "key": "scheduleMode.hourly",
+      "message": "Hourly",
+      "messageId": "settings.automations.scheduleMode.hourly"
+    },
+    {
+      "description": "Dropdown label for a daily automation schedule",
       "key": "scheduleMode.daily",
       "message": "Daily",
       "messageId": "settings.automations.scheduleMode.daily"
     },
     {
-      "description": "Segmented toggle label for interval schedule",
+      "description": "Dropdown label for a weekdays-only automation schedule",
+      "key": "scheduleMode.weekdays",
+      "message": "Weekdays",
+      "messageId": "settings.automations.scheduleMode.weekdays"
+    },
+    {
+      "description": "Dropdown label for a weekly automation schedule",
+      "key": "scheduleMode.weekly",
+      "message": "Weekly",
+      "messageId": "settings.automations.scheduleMode.weekly"
+    },
+    {
+      "description": "Dropdown label for a custom automation schedule",
+      "key": "scheduleMode.custom",
+      "message": "Custom",
+      "messageId": "settings.automations.scheduleMode.custom"
+    },
+    {
+      "description": "Dropdown label for a heartbeat automation interval schedule",
       "key": "scheduleMode.interval",
       "message": "Interval",
       "messageId": "settings.automations.scheduleMode.interval"
     },
     {
-      "description": "Segmented toggle label for running automations in a worktree",
-      "key": "executionEnvironment.worktree",
-      "message": "Worktree",
-      "messageId": "settings.automations.executionEnvironment.worktree"
-    },
-    {
-      "description": "Tooltip explaining worktree execution mode for automations",
-      "key": "executionEnvironment.worktree.help",
-      "message": "Runs in a dedicated Git worktree created from the selected project, keeping your current checkout untouched.",
-      "messageId": "settings.automations.executionEnvironment.worktree.help"
-    },
-    {
-      "description": "Segmented toggle label for running automations locally in the selected project",
+      "description": "Dropdown label for running automations locally in the selected project",
       "key": "executionEnvironment.local",
       "message": "Local",
       "messageId": "settings.automations.executionEnvironment.local"
@@ -48,10 +150,40 @@
       "messageId": "settings.automations.executionEnvironment.local.help"
     },
     {
+      "description": "Dropdown label for running automations in a worktree",
+      "key": "executionEnvironment.worktree",
+      "message": "Worktree",
+      "messageId": "settings.automations.executionEnvironment.worktree"
+    },
+    {
+      "description": "Tooltip explaining worktree execution mode for automations",
+      "key": "executionEnvironment.worktree.help",
+      "message": "Runs in a dedicated Git worktree created from the selected project, keeping your current checkout untouched.",
+      "messageId": "settings.automations.executionEnvironment.worktree.help"
+    },
+    {
+      "description": "Dropdown label for sending heartbeat automations into a pinned thread",
+      "key": "destination.thread",
+      "message": "Chat",
+      "messageId": "settings.automations.destination.thread"
+    },
+    {
+      "description": "Tooltip explaining thread destination for automations",
+      "key": "destination.thread.help",
+      "message": "Sends messages directly into the selected chat instead of running in a project folder or worktree",
+      "messageId": "settings.automations.destination.thread.help"
+    },
+    {
       "description": "RRULE weekday short label",
       "key": "rrule.weekday.mon",
       "message": "Mo",
       "messageId": "settings.automations.rrule.weekday.mon"
+    },
+    {
+      "description": "RRULE weekday long label",
+      "key": "rrule.weekday.monday",
+      "message": "Monday",
+      "messageId": "settings.automations.rrule.weekday.monday"
     },
     {
       "description": "RRULE weekday short label",
@@ -60,10 +192,22 @@
       "messageId": "settings.automations.rrule.weekday.tue"
     },
     {
+      "description": "RRULE weekday long label",
+      "key": "rrule.weekday.tuesday",
+      "message": "Tuesday",
+      "messageId": "settings.automations.rrule.weekday.tuesday"
+    },
+    {
       "description": "RRULE weekday short label",
       "key": "rrule.weekday.wed",
       "message": "We",
       "messageId": "settings.automations.rrule.weekday.wed"
+    },
+    {
+      "description": "RRULE weekday long label",
+      "key": "rrule.weekday.wednesday",
+      "message": "Wednesday",
+      "messageId": "settings.automations.rrule.weekday.wednesday"
     },
     {
       "description": "RRULE weekday short label",
@@ -72,10 +216,22 @@
       "messageId": "settings.automations.rrule.weekday.thu"
     },
     {
+      "description": "RRULE weekday long label",
+      "key": "rrule.weekday.thursday",
+      "message": "Thursday",
+      "messageId": "settings.automations.rrule.weekday.thursday"
+    },
+    {
       "description": "RRULE weekday short label",
       "key": "rrule.weekday.fri",
       "message": "Fr",
       "messageId": "settings.automations.rrule.weekday.fri"
+    },
+    {
+      "description": "RRULE weekday long label",
+      "key": "rrule.weekday.friday",
+      "message": "Friday",
+      "messageId": "settings.automations.rrule.weekday.friday"
     },
     {
       "description": "RRULE weekday short label",
@@ -84,28 +240,22 @@
       "messageId": "settings.automations.rrule.weekday.sat"
     },
     {
+      "description": "RRULE weekday long label",
+      "key": "rrule.weekday.saturday",
+      "message": "Saturday",
+      "messageId": "settings.automations.rrule.weekday.saturday"
+    },
+    {
       "description": "RRULE weekday short label",
       "key": "rrule.weekday.sun",
       "message": "Su",
       "messageId": "settings.automations.rrule.weekday.sun"
     },
     {
-      "description": "Placeholder for cwd select input",
-      "key": "cwdPlaceholder",
-      "message": "Choose a folder",
-      "messageId": "settings.automations.cwdPlaceholder"
-    },
-    {
-      "description": "Dialog title for editing an automation",
-      "key": "dialog.editTitle",
-      "message": "Edit automation",
-      "messageId": "settings.automations.dialog.editTitle"
-    },
-    {
-      "description": "Dialog title for creating an automation",
-      "key": "dialog.title",
-      "message": "Create automation",
-      "messageId": "settings.automations.dialog.title"
+      "description": "RRULE weekday long label",
+      "key": "rrule.weekday.sunday",
+      "message": "Sunday",
+      "messageId": "settings.automations.rrule.weekday.sunday"
     },
     {
       "description": "Label for automation name input",
@@ -116,32 +266,68 @@
     {
       "description": "Placeholder for automation name input",
       "key": "namePlaceholder",
-      "message": "Check for sentry issues",
+      "message": "Automation title",
       "messageId": "settings.automations.namePlaceholder"
     },
     {
-      "description": "Label for workspace select input",
-      "key": "cwdLabel",
-      "message": "Projects",
-      "messageId": "settings.automations.cwdLabel"
+      "description": "Aria label for the automation sandbox details tooltip trigger",
+      "key": "banner.tooltipLabel",
+      "message": "Automation sandbox details",
+      "messageId": "settings.automations.banner.tooltipLabel"
     },
     {
-      "description": "Help text describing how to target a branch in automation prompts",
-      "key": "cwdSubtitle",
-      "message": "If you want an automation to run on a specific branch, you can specify it in your prompt.",
-      "messageId": "settings.automations.cwdSubtitle"
+      "description": "Aria label for the automation modal button when leaving template mode",
+      "key": "modal.collapse",
+      "message": "Collapse automation modal",
+      "messageId": "settings.automations.modal.collapse"
     },
     {
-      "description": "Label for automation execution environment selection",
-      "key": "executionEnvironment.label",
-      "message": "Execution environment",
-      "messageId": "settings.automations.executionEnvironment.label"
+      "description": "Aria label for the automation modal button when entering template mode",
+      "key": "modal.expand",
+      "message": "Expand automation modal",
+      "messageId": "settings.automations.modal.expand"
     },
     {
-      "description": "Aria label for execution environment segmented toggle",
-      "key": "executionEnvironment.ariaLabel",
-      "message": "Execution environment",
-      "messageId": "settings.automations.executionEnvironment.ariaLabel"
+      "description": "Label for the automation modal button when template mode is active",
+      "key": "modal.createNew",
+      "message": "Create new",
+      "messageId": "settings.automations.modal.createNew"
+    },
+    {
+      "description": "Label for the automation modal button when composer mode is active",
+      "key": "modal.useTemplate",
+      "message": "Use template",
+      "messageId": "settings.automations.modal.useTemplate"
+    },
+    {
+      "description": "Title shown in the automation modal when template mode is active",
+      "key": "modal.templateTitle",
+      "message": "Automation templates",
+      "messageId": "settings.automations.modal.templateTitle"
+    },
+    {
+      "description": "Placeholder for cwd select input",
+      "key": "cwdPlaceholder",
+      "message": "Choose a folder",
+      "messageId": "settings.automations.cwdPlaceholder"
+    },
+    {
+      "description": "Tooltip explaining why automation project options only include local projects when remote connections are connected",
+      "key": "projectDropdown.localOnlyTooltip",
+      "message": "Automations can only be created for local projects",
+      "messageId": "settings.automations.projectDropdown.localOnlyTooltip"
+    },
+    {
+      "description": "Dialog title for editing an automation",
+      "key": "dialog.editTitle",
+      "message": "Edit automation",
+      "messageId": "settings.automations.dialog.editTitle"
+    },
+    {
+      "description": "Button label for clearing the automation title and prompt",
+      "key": "clear",
+      "message": "Clear",
+      "messageId": "settings.automations.clear"
     },
     {
       "description": "Label for automation prompt input",
@@ -152,20 +338,20 @@
     {
       "description": "Placeholder text for automations prompt input",
       "key": "promptPlaceholder",
-      "message": "look for crashes in $Sentry",
+      "message": "Add prompt e.g. look for crashes in $sentry",
       "messageId": "settings.automations.promptPlaceholder"
-    },
-    {
-      "description": "Aria label for schedule type segmented toggle",
-      "key": "scheduleModeLabel",
-      "message": "Schedule type",
-      "messageId": "settings.automations.scheduleModeLabel"
     },
     {
       "description": "Button label for deleting an automation",
       "key": "delete",
       "message": "Delete",
       "messageId": "settings.automations.delete"
+    },
+    {
+      "description": "Aria label for execution environment dropdown",
+      "key": "executionEnvironment.ariaLabel",
+      "message": "Execution environment",
+      "messageId": "settings.automations.executionEnvironment.ariaLabel"
     },
     {
       "description": "Cancel button label for automations dialog",
@@ -178,24 +364,6 @@
       "key": "save",
       "message": "Save",
       "messageId": "settings.automations.save"
-    },
-    {
-      "description": "Execution details shown when local mode is selected",
-      "key": "executionCopy.local",
-      "message": "Automations run directly in the selected project directories.",
-      "messageId": "settings.automations.executionCopy.local"
-    },
-    {
-      "description": "Execution details shown when selected automation projects use git",
-      "key": "executionCopy.git",
-      "message": "Git projects run in dedicated background worktrees.",
-      "messageId": "settings.automations.executionCopy.git"
-    },
-    {
-      "description": "Execution details shown when selected automation projects are not git repositories and worktree mode is selected",
-      "key": "executionCopy.nonGit",
-      "message": "Non-version-controlled projects run locally because worktrees require Git.",
-      "messageId": "settings.automations.executionCopy.nonGit"
     },
     {
       "description": "Warning shown in the automation create modal when dangerous sandbox mode is enabled",
@@ -216,46 +384,244 @@
       "messageId": "settings.automations.banner.defaultHowTo.default"
     },
     {
-      "description": "Header for automation schedule section",
-      "key": "scheduleHeader",
-      "message": "Schedule",
-      "messageId": "settings.automations.scheduleHeader"
+      "description": "Singular suffix label for the heartbeat automation interval minutes input",
+      "key": "scheduleIntervalMinuteSuffix",
+      "message": "minute",
+      "messageId": "settings.automations.scheduleIntervalMinuteSuffix"
     },
     {
-      "description": "Label for automation interval schedule input",
-      "key": "scheduleLabel",
-      "message": "Run every",
-      "messageId": "settings.automations.scheduleLabel"
+      "description": "Plural suffix label for the heartbeat automation interval minutes input",
+      "key": "scheduleIntervalMinutesSuffix",
+      "message": "minutes",
+      "messageId": "settings.automations.scheduleIntervalMinutesSuffix"
     },
     {
-      "description": "Label for automation interval schedule hours",
-      "key": "scheduleHours",
+      "description": "Suffix label for the automation interval hours input",
+      "key": "scheduleIntervalHoursSuffix",
       "message": "hours",
-      "messageId": "settings.automations.scheduleHours"
+      "messageId": "settings.automations.scheduleIntervalHoursSuffix"
     },
     {
-      "description": "Label for automation weekday selector",
-      "key": "scheduleWeekdays",
-      "message": "On",
-      "messageId": "settings.automations.scheduleWeekdays"
+      "description": "Accessible label for the heartbeat interval minutes input",
+      "key": "scheduleIntervalMinutes",
+      "message": "Interval minutes",
+      "messageId": "settings.automations.scheduleIntervalMinutes"
     },
     {
-      "description": "Tooltip text for an active automation weekday",
-      "key": "weekdayState.included",
-      "message": "Included",
-      "messageId": "settings.automations.weekdayState.included"
+      "description": "Accessible label for the automation interval hours input",
+      "key": "scheduleIntervalHours",
+      "message": "Interval hours",
+      "messageId": "settings.automations.scheduleIntervalHours"
     },
     {
-      "description": "Tooltip text for an inactive automation weekday",
-      "key": "weekdayState.excluded",
-      "message": "Excluded",
-      "messageId": "settings.automations.weekdayState.excluded"
+      "description": "Header label above automation schedule controls",
+      "key": "schedulePopoverTitle",
+      "message": "Schedule",
+      "messageId": "settings.automations.schedulePopoverTitle"
     },
     {
-      "description": "Fallback label when no cwd options exist",
-      "key": "cwdEmpty",
-      "message": "No project folders available",
-      "messageId": "settings.automations.cwdEmpty"
+      "description": "Aria label for schedule type dropdown",
+      "key": "scheduleModeLabel",
+      "message": "Schedule type",
+      "messageId": "settings.automations.scheduleModeLabel"
+    },
+    {
+      "description": "Label for the automation interval input",
+      "key": "scheduleIntervalLabel",
+      "message": "Every",
+      "messageId": "settings.automations.scheduleIntervalLabel"
+    },
+    {
+      "description": "Accessible label for the weekly automation day selector",
+      "key": "scheduleWeekday",
+      "message": "Day",
+      "messageId": "settings.automations.scheduleWeekday"
+    },
+    {
+      "description": "Accessible label for the custom RRULE automation schedule editor",
+      "key": "scheduleCustomLabel",
+      "message": "Custom RRULE",
+      "messageId": "settings.automations.scheduleCustomLabel"
+    },
+    {
+      "description": "Placeholder text for the custom automation RRULE editor",
+      "key": "scheduleCustomPlaceholder",
+      "message": "RRULE:FREQ=MONTHLY;BYMONTHDAY=1;BYHOUR=9;BYMINUTE=0",
+      "messageId": "settings.automations.scheduleCustomPlaceholder"
+    },
+    {
+      "description": "Accessible label for the automation schedule time input",
+      "key": "scheduleTime",
+      "message": "Time",
+      "messageId": "settings.automations.scheduleTime"
+    },
+    {
+      "description": "Accessible label for closing the schedule time picker",
+      "key": "hideTimePicker",
+      "message": "Hide time picker",
+      "messageId": "settings.automations.hideTimePicker"
+    },
+    {
+      "description": "Accessible label for opening the schedule time picker",
+      "key": "showTimePicker",
+      "message": "Show time picker",
+      "messageId": "settings.automations.showTimePicker"
+    },
+    {
+      "description": "Accessible label for selecting a time in the schedule time picker",
+      "key": "timePicker.setTime",
+      "message": "Set time to {time}",
+      "messageId": "settings.automations.timePicker.setTime"
+    },
+    {
+      "description": "Fallback label when RRULE summary cannot be generated",
+      "key": "rruleSummaryFallback",
+      "message": "Custom schedule",
+      "messageId": "settings.automations.rruleSummaryFallback"
+    },
+    {
+      "description": "Aria label for automation model dropdown",
+      "key": "model.ariaLabel",
+      "message": "Model",
+      "messageId": "settings.automations.model.ariaLabel"
+    },
+    {
+      "description": "Fallback label while automation model options are loading",
+      "key": "model.loading",
+      "message": "Loading model",
+      "messageId": "settings.automations.model.loading"
+    },
+    {
+      "description": "Header label above automation model options",
+      "key": "model.title",
+      "message": "Model",
+      "messageId": "settings.automations.model.title"
+    },
+    {
+      "description": "Fallback label while automation reasoning options are loading",
+      "key": "reasoning.loading",
+      "message": "Loading reasoning",
+      "messageId": "settings.automations.reasoning.loading"
+    },
+    {
+      "description": "Tooltip shown for the compact automation reasoning trigger",
+      "key": "reasoning.compactTooltip",
+      "message": "{reasoning} reasoning",
+      "messageId": "settings.automations.reasoning.compactTooltip"
+    },
+    {
+      "description": "Aria label for automation reasoning effort dropdown",
+      "key": "reasoning.ariaLabel",
+      "message": "Reasoning",
+      "messageId": "settings.automations.reasoning.ariaLabel"
+    },
+    {
+      "description": "Header label above automation reasoning options",
+      "key": "reasoning.title",
+      "message": "Reasoning",
+      "messageId": "settings.automations.reasoning.title"
+    },
+    {
+      "description": "Placeholder for heartbeat automation thread selector",
+      "key": "heartbeatThread.placeholder",
+      "message": "Choose a pinned chat",
+      "messageId": "settings.automations.heartbeatThread.placeholder"
+    },
+    {
+      "description": "Aria label for heartbeat automation thread selector",
+      "key": "heartbeatThread.ariaLabel",
+      "message": "Target chat",
+      "messageId": "settings.automations.heartbeatThread.ariaLabel"
+    },
+    {
+      "description": "Header label above heartbeat automation thread options",
+      "key": "heartbeatThread.title",
+      "message": "Target chat",
+      "messageId": "settings.automations.heartbeatThread.title"
+    },
+    {
+      "description": "Label for a selected heartbeat thread that is no longer pinned",
+      "key": "heartbeatThread.unpinned",
+      "message": "unpinned",
+      "messageId": "settings.automations.heartbeatThread.unpinned"
+    },
+    {
+      "description": "Empty-state label when no pinned local threads are available for heartbeat automations",
+      "key": "heartbeatThread.empty",
+      "message": "Pin a local chat first to use heartbeat automations",
+      "messageId": "settings.automations.heartbeatThread.empty"
+    },
+    {
+      "description": "Tooltip shown for the compact automation execution environment trigger",
+      "key": "executionEnvironment.compactTooltip",
+      "message": "Run in {environment}",
+      "messageId": "settings.automations.executionEnvironment.compactTooltip"
+    },
+    {
+      "description": "Header label above automation execution environment options",
+      "key": "executionEnvironment.menuTitle",
+      "message": "Run in",
+      "messageId": "settings.automations.executionEnvironment.menuTitle"
+    },
+    {
+      "description": "Button label for running an automation immediately",
+      "key": "runNow",
+      "message": "Run now",
+      "messageId": "settings.automations.runNow"
+    },
+    {
+      "description": "Label for selecting the chats target in the automation project dropdown",
+      "key": "projectDropdown.projectless",
+      "message": "Chats",
+      "messageId": "settings.automations.projectDropdown.projectless"
+    },
+    {
+      "description": "Header title for a new automation before it is named",
+      "key": "dialog.newTitle",
+      "message": "New automation",
+      "messageId": "settings.automations.dialog.newTitle"
+    },
+    {
+      "description": "Placeholder text for automation project dropdown",
+      "key": "projectDropdown.placeholder",
+      "message": "Select project",
+      "messageId": "settings.automations.projectDropdown.placeholder"
+    },
+    {
+      "description": "Button label for creating a new automation",
+      "key": "create",
+      "message": "Create",
+      "messageId": "settings.automations.create"
+    },
+    {
+      "description": "Button label for retrying a failed automation save",
+      "key": "saveRetry",
+      "message": "Save",
+      "messageId": "settings.automations.saveRetry"
+    },
+    {
+      "description": "Aria label for resuming an automation",
+      "key": "resumeAria",
+      "message": "Resume automation",
+      "messageId": "settings.automations.resumeAria"
+    },
+    {
+      "description": "Aria label for pausing an automation",
+      "key": "pauseAria",
+      "message": "Pause automation",
+      "messageId": "settings.automations.pauseAria"
+    },
+    {
+      "description": "Aria label for deleting an automation",
+      "key": "deleteAria",
+      "message": "Delete automation",
+      "messageId": "settings.automations.deleteAria"
+    },
+    {
+      "description": "Loading state for workflows list",
+      "key": "loading",
+      "message": "Loading…",
+      "messageId": "settings.automations.loading"
     }
   ]
 }
