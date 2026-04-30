@@ -74,6 +74,10 @@ async function resolveOutputDir(options) {
 }
 
 async function findAssetBySource(outputDir, entryMatcher, sourceMatcher, label) {
+  return (await findAssetsBySource(outputDir, entryMatcher, sourceMatcher, label))[0];
+}
+
+async function findAssetsBySource(outputDir, entryMatcher, sourceMatcher, label) {
   const assetsDir = join(outputDir, "content", "webview", "assets");
   if (!(await pathExists(assetsDir))) {
     fail(`Missing assets directory: ${assetsDir}`);
@@ -83,15 +87,20 @@ async function findAssetBySource(outputDir, entryMatcher, sourceMatcher, label) 
     .filter((entry) => entry.endsWith(".js") && entryMatcher(entry))
     .sort();
 
+  const matches = [];
   for (const entry of candidates) {
     const assetPath = join(assetsDir, entry);
     const source = await readFile(assetPath, "utf8");
     if (sourceMatcher(source)) {
-      return {
+      matches.push({
         assetPath,
         source,
-      };
+      });
     }
+  }
+
+  if (matches.length > 0) {
+    return matches;
   }
 
   fail(`Could not find ${label} in ${assetsDir}`);
@@ -175,32 +184,38 @@ Source message ids:
 }
 
 function renderReadme({
-  dialogAssetPath,
+  dialogAssetPaths,
   homeAssetPath,
   outputDir,
   templates,
   uiMessages,
   version,
 }) {
+  const dialogAssetList = dialogAssetPaths
+    .map((assetPath) => `- \`${relative(PROJECT_ROOT, assetPath)}\``)
+    .join("\n");
+
   return `# Automation Examples
 
 Latest extracted app version: \`${version}\`
 
 Extracted from the compiled home bundle: \`${relative(PROJECT_ROOT, homeAssetPath)}\`
 
-Dialog metadata extracted from: \`${relative(PROJECT_ROOT, dialogAssetPath)}\`
+Automation UI metadata extracted from:
+
+${dialogAssetList}
 
 Output directory: \`${relative(PROJECT_ROOT, outputDir)}\`
 
 Found ${templates.length} automation template cards from the "Start with a template" UI.
 
-Found ${uiMessages.length} automation dialog UI messages.
+Found ${uiMessages.length} automation UI messages.
 
 Files:
 
 - \`templates.json\`: machine-readable template manifest
 - \`templates/\`: one markdown file per automation template
-- \`ui-messages.json\`: automation dialog labels, placeholders, and warnings
+- \`ui-messages.json\`: automation UI labels, placeholders, and warnings
 `;
 }
 
@@ -219,19 +234,22 @@ async function main() {
 
   const homeAsset = await findAssetBySource(
     outputDir,
-    (entry) => /^index-.*\.js$/i.test(entry),
+    (entry) => /^(automation-dialog|index)-.*\.js$/i.test(entry),
     (source) => source.includes("home.useCases.") && source.includes("isAutomation:!0"),
     "automation templates bundle",
   );
-  const dialogAsset = await findAssetBySource(
+  const dialogAssets = await findAssetsBySource(
     outputDir,
-    (entry) => /^(automation-dialog|index)-.*\.js$/i.test(entry),
-    (source) => source.includes("settings.automations.") && source.includes("promptPlaceholder"),
-    "automation dialog bundle",
+    (entry) => /^(automation-dialog|automations-page|composer|index)-.*\.js$/i.test(entry),
+    (source) =>
+      source.includes("id:`settings.automations.") && source.includes("defaultMessage:"),
+    "automation UI message bundle",
   );
 
   const templates = extractAutomationTemplates(homeAsset.source);
-  const uiMessages = extractDialogMessages(dialogAsset.source);
+  const uiMessages = extractDialogMessages(
+    dialogAssets.map((dialogAsset) => dialogAsset.source).join("\n"),
+  );
 
   await removeIfExists(extractionDir);
   await ensureDir(templatesDir);
@@ -257,8 +275,11 @@ async function main() {
       {
         appVersion: version,
         extractedAt: new Date().toISOString(),
-        sourceAsset: relative(PROJECT_ROOT, dialogAsset.assetPath),
-        sourceType: "compiled-webview-dialog-bundle",
+        sourceAsset: relative(PROJECT_ROOT, dialogAssets[0].assetPath),
+        sourceAssets: dialogAssets.map((dialogAsset) =>
+          relative(PROJECT_ROOT, dialogAsset.assetPath),
+        ),
+        sourceType: "compiled-webview-automation-ui-bundles",
         messageCount: uiMessages.length,
         messages: uiMessages,
       },
@@ -269,7 +290,7 @@ async function main() {
   await writeFile(
     join(extractionDir, "README.md"),
     renderReadme({
-      dialogAssetPath: dialogAsset.assetPath,
+      dialogAssetPaths: dialogAssets.map((dialogAsset) => dialogAsset.assetPath),
       homeAssetPath: homeAsset.assetPath,
       outputDir: extractionDir,
       templates,
