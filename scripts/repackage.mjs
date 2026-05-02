@@ -75,6 +75,25 @@ function parseArgs(argv) {
   return options;
 }
 
+const AVATAR_OVERLAY_MOUSE_PASSTHROUGH_CALL =
+  "e.setIgnoreMouseEvents(!0,{forward:!0});return";
+const AVATAR_OVERLAY_MOUSE_INTERACTIVE_CALL =
+  "e.setIgnoreMouseEvents(!1);return;;;;;;;;;;;;;";
+const AVATAR_OVERLAY_DRAG_METHODS_START =
+  "startDrag(e,{pointerWindowX:t,pointerWindowY:r})";
+const AVATAR_OVERLAY_DRAG_METHODS_END = "async ensureWindow(e){";
+const AVATAR_OVERLAY_LINUX_INTERACTION_METHODS = [
+  "startDrag(e,{pointerWindowX:t,pointerWindowY:r}){}",
+  "moveDrag(e){}",
+  "endDrag(e){}",
+  "throwWithVelocity(e,t,r){}",
+  "setElementSize(e,{mascot:t,tray:n}){let r=this.window;r==null||r.isDestroyed()||r.webContents.id!==e||(this.cancelMomentum(),this.anchor={...this.anchor,x:r.getBounds().x+(this.layout?.mascot.left??0),y:r.getBounds().y+(this.layout?.mascot.top??0),width:t.width,height:t.height},this.mascotSize=t,this.traySize=n,this.applyLayout(r))}",
+].join("");
+const AVATAR_OVERLAY_OPEN_MAIN_WINDOW_CALL =
+  "r&&i.startedOnMascot&&!i.hasMoved&&f.dispatchMessage(`open-current-main-window`,{})";
+const AVATAR_OVERLAY_DISABLED_OPEN_MAIN_WINDOW_CALL =
+  "r&&i.startedOnMascot&&!i.hasMoved&&false&&f.dispatchMessage(`open-current-main-window`,{})";
+
 function relativeParts(moduleId) {
   return moduleId.split("/").filter(Boolean);
 }
@@ -464,6 +483,108 @@ async function replaceNativeArtifacts(builtNodeModulesDir, outputUnpackedDir, na
   return missingArtifacts;
 }
 
+async function patchAvatarOverlayMousePassthrough(appAsarPath) {
+  const before = Buffer.from(AVATAR_OVERLAY_MOUSE_PASSTHROUGH_CALL);
+  const after = Buffer.from(AVATAR_OVERLAY_MOUSE_INTERACTIVE_CALL);
+  if (before.length !== after.length) {
+    fail("Avatar overlay mouse passthrough patch must preserve app.asar byte length.");
+  }
+
+  const archive = await readFile(appAsarPath);
+  const firstIndex = archive.indexOf(before);
+  if (firstIndex < 0) {
+    fail("Could not find avatar overlay mouse passthrough call in app.asar.");
+  }
+  if (archive.indexOf(before, firstIndex + before.length) >= 0) {
+    fail("Avatar overlay mouse passthrough call matched more than once in app.asar.");
+  }
+
+  after.copy(archive, firstIndex);
+  await writeFile(appAsarPath, archive);
+  info("Patched avatar overlay mouse passthrough for Linux.");
+}
+
+function patchAvatarOverlayDragMethods(archive) {
+  const startMarker = Buffer.from(AVATAR_OVERLAY_DRAG_METHODS_START);
+  const endMarker = Buffer.from(AVATAR_OVERLAY_DRAG_METHODS_END);
+  const startIndex = archive.indexOf(startMarker);
+  if (startIndex < 0) {
+    fail("Could not find avatar overlay drag methods in app.asar.");
+  }
+  if (archive.indexOf(startMarker, startIndex + startMarker.length) >= 0) {
+    fail("Avatar overlay drag methods matched more than once in app.asar.");
+  }
+
+  const endIndex = archive.indexOf(endMarker, startIndex);
+  if (endIndex < 0) {
+    fail("Could not find end of avatar overlay drag methods in app.asar.");
+  }
+
+  const beforeLength = endIndex - startIndex;
+  const after = Buffer.from(AVATAR_OVERLAY_LINUX_INTERACTION_METHODS);
+  if (after.length > beforeLength) {
+    fail("Avatar overlay Linux interaction patch does not fit in app.asar.");
+  }
+
+  after.copy(archive, startIndex);
+  archive.fill(";".charCodeAt(0), startIndex + after.length, endIndex);
+  info("Patched avatar overlay drag handling for Linux.");
+}
+
+async function patchAvatarOverlayForLinux(appAsarPath) {
+  await patchAvatarOverlayMousePassthrough(appAsarPath);
+  const archive = await readFile(appAsarPath);
+  patchAvatarOverlayDragMethods(archive);
+  await writeFile(appAsarPath, archive);
+}
+
+async function listFilesRecursive(rootDir) {
+  const files = [];
+  const stack = [rootDir];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    for (const entry of await readdir(current, { withFileTypes: true })) {
+      const entryPath = join(current, entry.name);
+      if (entry.isDirectory()) {
+        stack.push(entryPath);
+      } else if (entry.isFile()) {
+        files.push(entryPath);
+      }
+    }
+  }
+  return files;
+}
+
+async function patchAvatarOverlayWebviewForLinux(webviewDir) {
+  const files = await listFilesRecursive(webviewDir);
+  let patchedCount = 0;
+
+  for (const file of files) {
+    if (!file.endsWith(".js")) {
+      continue;
+    }
+    const source = await readFile(file, "utf8");
+    if (!source.includes(AVATAR_OVERLAY_OPEN_MAIN_WINDOW_CALL)) {
+      continue;
+    }
+    const patched = source.replace(
+      AVATAR_OVERLAY_OPEN_MAIN_WINDOW_CALL,
+      AVATAR_OVERLAY_DISABLED_OPEN_MAIN_WINDOW_CALL,
+    );
+    if (patched.includes(AVATAR_OVERLAY_OPEN_MAIN_WINDOW_CALL)) {
+      fail("Avatar overlay open-main-window call matched more than once in webview.");
+    }
+    await writeFile(file, patched);
+    patchedCount += 1;
+  }
+
+  if (patchedCount !== 1) {
+    fail(`Expected to patch one avatar overlay webview asset, patched ${patchedCount}.`);
+  }
+
+  info("Patched avatar overlay mascot click handling for Linux.");
+}
+
 async function main() {
   const options = parseArgs(process.argv.slice(2));
 
@@ -600,15 +721,18 @@ async function main() {
     if (await pathExists(defaultAppAsar)) {
       await removeIfExists(defaultAppAsar);
     }
+    await patchAvatarOverlayForLinux(join(outputResourcesDir, "app.asar"));
 
     const extractedAsarDir = join(workDir, "asar");
     asar.extractAll(upstreamAsarPath, extractedAsarDir);
     const extractedWebviewDir = join(extractedAsarDir, "webview");
     if (await pathExists(extractedWebviewDir)) {
-      await cp(extractedWebviewDir, join(outputDir, "content", "webview"), {
+      const outputWebviewDir = join(outputDir, "content", "webview");
+      await cp(extractedWebviewDir, outputWebviewDir, {
         recursive: true,
         force: true,
       });
+      await patchAvatarOverlayWebviewForLinux(outputWebviewDir);
     } else {
       warn("No webview directory was found inside app.asar.");
     }

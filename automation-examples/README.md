@@ -1,14 +1,14 @@
 # Automation Examples
 
-Latest extracted app version: `26.429.20946`
+Latest extracted app version: `26.429.30905`
 
-Extracted from the compiled home bundle: `out/codex-linux-26.429.20946/content/webview/assets/automation-dialog-x-gb27xA.js`
+Extracted from the compiled home bundle: `out/codex-linux-26.429.30905/content/webview/assets/automation-dialog-BPCTrueT.js`
 
 Automation UI metadata extracted from:
 
-- `out/codex-linux-26.429.20946/content/webview/assets/automation-dialog-x-gb27xA.js`
-- `out/codex-linux-26.429.20946/content/webview/assets/automations-page-CtuFvC3G.js`
-- `out/codex-linux-26.429.20946/content/webview/assets/composer-B5UwBne4.js`
+- `out/codex-linux-26.429.30905/content/webview/assets/automation-dialog-BPCTrueT.js`
+- `out/codex-linux-26.429.30905/content/webview/assets/automations-page-DxhJZ-qs.js`
+- `out/codex-linux-26.429.30905/content/webview/assets/composer-CNnjHdHK.js`
 
 Output directory: `automation-examples`
 

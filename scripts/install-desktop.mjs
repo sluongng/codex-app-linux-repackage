@@ -155,6 +155,7 @@ function buildDesktopLauncher({ codexPath, rgPath }) {
     'ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"',
     'USER_DATA_DIR="${CODEX_APP_USER_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/codex-app/profile}"',
     'mkdir -p "${USER_DATA_DIR}"',
+    'OZONE_PLATFORM="${CODEX_APP_OZONE_PLATFORM:-x11}"',
   ];
 
   if (codexPath != null) {
@@ -165,17 +166,25 @@ function buildDesktopLauncher({ codexPath, rgPath }) {
   }
 
   lines.push('has_user_data_dir=0');
+  lines.push('has_ozone_platform=0');
   lines.push('for arg in "$@"; do');
   lines.push('  if [[ "${arg}" == --user-data-dir=* || "${arg}" == "--user-data-dir" ]]; then');
   lines.push('    has_user_data_dir=1');
-  lines.push('    break');
+  lines.push('  fi');
+  lines.push('  if [[ "${arg}" == --ozone-platform=* || "${arg}" == "--ozone-platform" ]]; then');
+  lines.push('    has_ozone_platform=1');
   lines.push('  fi');
   lines.push('done');
   lines.push('');
+  lines.push('start_args=()');
+  lines.push('if [[ "${has_ozone_platform}" -eq 0 && -n "${OZONE_PLATFORM}" ]]; then');
+  lines.push('  start_args+=("--ozone-platform=${OZONE_PLATFORM}")');
+  lines.push('fi');
+  lines.push('');
   lines.push('if [[ "${has_user_data_dir}" -eq 1 ]]; then');
-  lines.push('  exec "${ROOT_DIR}/start.sh" "$@"');
+  lines.push('  exec "${ROOT_DIR}/start.sh" "${start_args[@]}" "$@"');
   lines.push('else');
-  lines.push('  exec "${ROOT_DIR}/start.sh" "--user-data-dir=${USER_DATA_DIR}" "$@"');
+  lines.push('  exec "${ROOT_DIR}/start.sh" "${start_args[@]}" "--user-data-dir=${USER_DATA_DIR}" "$@"');
   lines.push('fi');
   lines.push("");
   return lines.join("\n");
