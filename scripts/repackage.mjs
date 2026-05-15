@@ -81,18 +81,26 @@ const AVATAR_OVERLAY_MOUSE_INTERACTIVE_CALL =
   "e.setIgnoreMouseEvents(!1);return;;;;;;;;;;;;;";
 const AVATAR_OVERLAY_DRAG_METHODS_START =
   "startDrag(e,{pointerWindowX:t,pointerWindowY:r})";
-const AVATAR_OVERLAY_DRAG_METHODS_END = "async ensureWindow(e){";
+const AVATAR_OVERLAY_DRAG_METHODS_END_MARKERS = [
+  "async ensureWindow(e){",
+  "async ensureWindow(){",
+];
 const AVATAR_OVERLAY_LINUX_INTERACTION_METHODS = [
   "startDrag(e,{pointerWindowX:t,pointerWindowY:r}){}",
   "moveDrag(e){}",
   "endDrag(e){}",
   "throwWithVelocity(e,t,r){}",
+  "startMascotResize(e,t){}",
+  "moveMascotResize(e,t){}",
+  "endMascotResize(e,t){}",
   "setElementSize(e,{mascot:t,tray:n}){let r=this.window;r==null||r.isDestroyed()||r.webContents.id!==e||(this.cancelMomentum(),this.anchor={...this.anchor,x:r.getBounds().x+(this.layout?.mascot.left??0),y:r.getBounds().y+(this.layout?.mascot.top??0),width:t.width,height:t.height},this.mascotSize=t,this.traySize=n,this.applyLayout(r))}",
 ].join("");
 const AVATAR_OVERLAY_OPEN_MAIN_WINDOW_CALL =
   "r&&i.startedOnMascot&&!i.hasMoved&&f.dispatchMessage(`open-current-main-window`,{})";
 const AVATAR_OVERLAY_DISABLED_OPEN_MAIN_WINDOW_CALL =
   "r&&i.startedOnMascot&&!i.hasMoved&&false&&f.dispatchMessage(`open-current-main-window`,{})";
+const AVATAR_OVERLAY_OPEN_MAIN_WINDOW_DISPATCH =
+  "dispatchMessage(`open-current-main-window`,{})";
 
 function relativeParts(moduleId) {
   return moduleId.split("/").filter(Boolean);
@@ -170,24 +178,61 @@ function readJsonFromAsar(archivePath, filePath) {
   return JSON.parse(asar.extractFile(archivePath, filePath).toString("utf8"));
 }
 
+function npmPlatformFieldAllows(field, currentValue) {
+  if (!Array.isArray(field) || field.length === 0) {
+    return true;
+  }
+
+  const values = field.map((value) => String(value));
+  if (values.includes(`!${currentValue}`)) {
+    return false;
+  }
+
+  const allowedValues = values.filter((value) => !value.startsWith("!"));
+  return allowedValues.length === 0 || allowedValues.includes(currentValue);
+}
+
+function packageSupportsCurrentPlatform(packageJson) {
+  return (
+    npmPlatformFieldAllows(packageJson.os, process.platform) &&
+    npmPlatformFieldAllows(packageJson.cpu, process.arch)
+  );
+}
+
 async function discoverNativeModules(appAsarPath, unpackedDir) {
   const nodeModulesDir = join(unpackedDir, "node_modules");
   if (!(await pathExists(nodeModulesDir))) {
-    return [];
+    return {
+      nativeModules: [],
+      skippedNativeModules: [],
+    };
   }
 
   const modules = [];
+  const skippedModules = [];
   for (const candidate of await collectNativeModuleCandidates(nodeModulesDir)) {
     const packageJsonPath = `node_modules/${candidate.moduleId}/package.json`;
     const packageJson = readJsonFromAsar(appAsarPath, packageJsonPath);
-    modules.push({
+    const moduleInfo = {
       moduleId: candidate.moduleId,
       version: String(packageJson.version),
       releaseArtifacts: candidate.releaseArtifacts,
-    });
+    };
+    if (!packageSupportsCurrentPlatform(packageJson)) {
+      skippedModules.push({
+        ...moduleInfo,
+        cpu: packageJson.cpu ?? null,
+        os: packageJson.os ?? null,
+      });
+      continue;
+    }
+    modules.push(moduleInfo);
   }
 
-  return modules;
+  return {
+    nativeModules: modules,
+    skippedNativeModules: skippedModules,
+  };
 }
 
 function buildCodexWrapper() {
@@ -411,6 +456,68 @@ for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
 `;
 }
 
+function electronMajorVersion(electronVersion) {
+  const majorVersion = Number(String(electronVersion).split(".")[0]);
+  if (!Number.isInteger(majorVersion) || majorVersion <= 0) {
+    fail(`Could not parse Electron version: ${electronVersion}`);
+  }
+  return majorVersion;
+}
+
+async function replaceTextOnce(filePath, before, after, description) {
+  const source = await readFile(filePath, "utf8");
+  const firstIndex = source.indexOf(before);
+  if (firstIndex < 0) {
+    fail(`Could not find ${description} in ${filePath}.`);
+  }
+  if (source.indexOf(before, firstIndex + before.length) >= 0) {
+    fail(`Found ${description} more than once in ${filePath}.`);
+  }
+  await writeFile(filePath, source.replace(before, after));
+}
+
+async function patchBetterSqlite3SourcesForElectron42(moduleRoot) {
+  await replaceTextOnce(
+    join(moduleRoot, "src", "util", "macros.cpp"),
+    "#define OnlyAddon static_cast<Addon*>(info.Data().As<v8::External>()->Value())",
+    [
+      "#define BetterSqlite3ExternalPointerTag v8::kExternalPointerTypeTagDefault",
+      "#define BetterSqlite3ExternalValue(external) (external)->Value(BetterSqlite3ExternalPointerTag)",
+      "#define BetterSqlite3ExternalNew(isolate, value) v8::External::New((isolate), (value), BetterSqlite3ExternalPointerTag)",
+      "#define OnlyAddon static_cast<Addon*>(BetterSqlite3ExternalValue(info.Data().As<v8::External>()))",
+    ].join("\n"),
+    "better-sqlite3 external pointer accessor",
+  );
+  await replaceTextOnce(
+    join(moduleRoot, "src", "better_sqlite3.cpp"),
+    "v8::Local<v8::External> data = v8::External::New(isolate, addon);",
+    "v8::Local<v8::External> data = BetterSqlite3ExternalNew(isolate, addon);",
+    "better-sqlite3 external pointer creation",
+  );
+  await replaceTextOnce(
+    join(moduleRoot, "src", "util", "helpers.cpp"),
+    "\t\tfunc,\n\t\t0,\n\t\tdata\n",
+    "\t\tfunc,\n\t\tnullptr,\n\t\tdata\n",
+    "better-sqlite3 native data property setter",
+  );
+}
+
+async function patchNativeModuleSourcesForElectron(buildDir, electronVersion, nativeModules) {
+  if (electronMajorVersion(electronVersion) < 42) {
+    return;
+  }
+
+  for (const nativeModule of nativeModules) {
+    if (nativeModule.moduleId !== "better-sqlite3") {
+      continue;
+    }
+    const moduleRoot = join(buildDir, "node_modules", ...relativeParts(nativeModule.moduleId));
+    await patchBetterSqlite3SourcesForElectron42(moduleRoot);
+    nativeModule.sourcePatches = ["electron-42-v8-external-pointer-tag"];
+    info("Patched better-sqlite3 native sources for Electron 42.");
+  }
+}
+
 async function createBuildWorkspace(buildDir, electronVersion, nativeModules) {
   await ensureDir(buildDir);
   await writeFile(
@@ -433,6 +540,7 @@ async function createBuildWorkspace(buildDir, electronVersion, nativeModules) {
   await run("npm", installArgs, {
     cwd: buildDir,
   });
+  await patchNativeModuleSourcesForElectron(buildDir, electronVersion, nativeModules);
 
   const rebuildCli = join(
     PROJECT_ROOT,
@@ -506,7 +614,6 @@ async function patchAvatarOverlayMousePassthrough(appAsarPath) {
 
 function patchAvatarOverlayDragMethods(archive) {
   const startMarker = Buffer.from(AVATAR_OVERLAY_DRAG_METHODS_START);
-  const endMarker = Buffer.from(AVATAR_OVERLAY_DRAG_METHODS_END);
   const startIndex = archive.indexOf(startMarker);
   if (startIndex < 0) {
     fail("Could not find avatar overlay drag methods in app.asar.");
@@ -515,8 +622,12 @@ function patchAvatarOverlayDragMethods(archive) {
     fail("Avatar overlay drag methods matched more than once in app.asar.");
   }
 
-  const endIndex = archive.indexOf(endMarker, startIndex);
-  if (endIndex < 0) {
+  const endIndex = AVATAR_OVERLAY_DRAG_METHODS_END_MARKERS.map((marker) =>
+    archive.indexOf(Buffer.from(marker), startIndex),
+  )
+    .filter((index) => index >= 0)
+    .sort((left, right) => left - right)[0];
+  if (endIndex == null) {
     fail("Could not find end of avatar overlay drag methods in app.asar.");
   }
 
@@ -563,16 +674,38 @@ async function patchAvatarOverlayWebviewForLinux(webviewDir) {
     if (!file.endsWith(".js")) {
       continue;
     }
-    const source = await readFile(file, "utf8");
-    if (!source.includes(AVATAR_OVERLAY_OPEN_MAIN_WINDOW_CALL)) {
+    let source = await readFile(file, "utf8");
+    if (
+      !source.includes(AVATAR_OVERLAY_OPEN_MAIN_WINDOW_CALL) &&
+      !source.includes(AVATAR_OVERLAY_OPEN_MAIN_WINDOW_DISPATCH)
+    ) {
       continue;
     }
-    const patched = source.replace(
-      AVATAR_OVERLAY_OPEN_MAIN_WINDOW_CALL,
-      AVATAR_OVERLAY_DISABLED_OPEN_MAIN_WINDOW_CALL,
-    );
-    if (patched.includes(AVATAR_OVERLAY_OPEN_MAIN_WINDOW_CALL)) {
-      fail("Avatar overlay open-main-window call matched more than once in webview.");
+    let patched;
+    if (source.includes(AVATAR_OVERLAY_OPEN_MAIN_WINDOW_CALL)) {
+      patched = source.replace(
+        AVATAR_OVERLAY_OPEN_MAIN_WINDOW_CALL,
+        AVATAR_OVERLAY_DISABLED_OPEN_MAIN_WINDOW_CALL,
+      );
+      if (patched.includes(AVATAR_OVERLAY_OPEN_MAIN_WINDOW_CALL)) {
+        fail("Avatar overlay open-main-window call matched more than once in webview.");
+      }
+    } else {
+      const dispatchIndex = source.indexOf(AVATAR_OVERLAY_OPEN_MAIN_WINDOW_DISPATCH);
+      if (source.indexOf(AVATAR_OVERLAY_OPEN_MAIN_WINDOW_DISPATCH, dispatchIndex + 1) >= 0) {
+        fail("Avatar overlay open-main-window dispatch matched more than once in webview.");
+      }
+
+      const guardIndex = source.lastIndexOf("&&(", dispatchIndex);
+      const guardPrefix = source.slice(Math.max(0, guardIndex - 100), guardIndex);
+      if (
+        guardIndex < 0 ||
+        !guardPrefix.includes(".startedOnMascot") ||
+        !guardPrefix.includes(".hasMoved")
+      ) {
+        fail("Could not find avatar overlay mascot-click guard in webview.");
+      }
+      patched = `${source.slice(0, guardIndex)}&&false&&(${source.slice(guardIndex + 3)}`;
     }
     await writeFile(file, patched);
     patchedCount += 1;
@@ -651,9 +784,19 @@ async function main() {
     );
 
     const packageJson = readJsonFromAsar(upstreamAsarPath, "package.json");
-    const nativeModules = await discoverNativeModules(upstreamAsarPath, upstreamUnpackedDir);
+    const { nativeModules, skippedNativeModules } = await discoverNativeModules(
+      upstreamAsarPath,
+      upstreamUnpackedDir,
+    );
     if (nativeModules.length === 0) {
       fail("No rebuildable native modules were discovered in app.asar.unpacked.");
+    }
+    if (skippedNativeModules.length > 0) {
+      warn(
+        `Skipping native module(s) unsupported on ${process.platform}/${process.arch}: ${skippedNativeModules
+          .map((nativeModule) => `${nativeModule.moduleId}@${nativeModule.version}`)
+          .join(", ")}`,
+      );
     }
 
     const appVersion = String(appInfo.CFBundleShortVersionString ?? packageJson.version);
@@ -754,7 +897,17 @@ async function main() {
       nativeModules: nativeModules.map((nativeModule) => ({
         moduleId: nativeModule.moduleId,
         version: nativeModule.version,
+        ...(nativeModule.sourcePatches == null
+          ? {}
+          : { sourcePatches: nativeModule.sourcePatches }),
         replacedArtifacts: nativeModule.releaseArtifacts,
+      })),
+      skippedNativeModules: skippedNativeModules.map((nativeModule) => ({
+        moduleId: nativeModule.moduleId,
+        version: nativeModule.version,
+        os: nativeModule.os,
+        cpu: nativeModule.cpu,
+        preservedArtifacts: nativeModule.releaseArtifacts,
       })),
       runtimeWrappers: {
         codex: "resources/codex",

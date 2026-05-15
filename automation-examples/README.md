@@ -1,20 +1,19 @@
 # Automation Examples
 
-Latest extracted app version: `26.429.30905`
+Latest extracted app version: `26.513.20950`
 
-Extracted from the compiled home bundle: `out/codex-linux-26.429.30905/content/webview/assets/automation-dialog-BPCTrueT.js`
+Extracted from the compiled home bundle: `out/codex-linux-26.513.20950/content/webview/assets/automation-dialog-C1bBU3Pl.js`
 
 Automation UI metadata extracted from:
 
-- `out/codex-linux-26.429.30905/content/webview/assets/automation-dialog-BPCTrueT.js`
-- `out/codex-linux-26.429.30905/content/webview/assets/automations-page-DxhJZ-qs.js`
-- `out/codex-linux-26.429.30905/content/webview/assets/composer-CNnjHdHK.js`
+- `out/codex-linux-26.513.20950/content/webview/assets/automation-dialog-C1bBU3Pl.js`
+- `out/codex-linux-26.513.20950/content/webview/assets/automations-page-B7ZjjArM.js`
 
 Output directory: `automation-examples`
 
 Found 18 automation template cards from the "Start with a template" UI.
 
-Found 103 automation UI messages.
+Found 102 automation UI messages.
 
 Files:
 

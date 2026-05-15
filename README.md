@@ -4,7 +4,7 @@ This project repackages the upstream macOS Codex desktop app so it can run on Li
 
 ## Why this approach
 
-The current upstream app exposes a machine-readable release feed at `https://persistent.oaistatic.com/codex-app-prod/appcast.xml`. That feed points to versioned macOS ZIP artifacts such as `Codex-darwin-arm64-26.429.20946.zip`, which are simpler to automate against than the generic `Codex.dmg` URL.
+The current upstream app exposes a machine-readable release feed at `https://persistent.oaistatic.com/codex-app-prod/appcast.xml`. That feed points to versioned macOS ZIP artifacts such as `Codex-darwin-arm64-26.513.20950.zip`, which are simpler to automate against than the generic `Codex.dmg` URL.
 
 The builder keeps the upstream `app.asar` intact and only swaps native artifacts at paths that are already indexed by `app.asar`. That avoids having to repack the archive and accidentally break unpacked helper binaries like `node-pty`'s `spawn-helper`.
 
@@ -48,25 +48,25 @@ npm run smoke-test
 Extract the bundled automation templates and related automation UI text into a repo directory:
 
 ```bash
-npm run extract-automation-examples -- --version 26.429.20946
+npm run extract-automation-examples -- --version 26.513.20950
 ```
 
 Install the current build as a desktop app for the current user:
 
 ```bash
-npm run install-desktop -- --version 26.429.20946
+npm run install-desktop -- --version 26.513.20950
 ```
 
 Build a specific upstream release:
 
 ```bash
-npm run repackage -- --version 26.429.20946
+npm run repackage -- --version 26.513.20950
 ```
 
 Build from a local upstream ZIP:
 
 ```bash
-npm run repackage -- --zip /path/to/Codex-darwin-arm64-26.429.20946.zip
+npm run repackage -- --zip /path/to/Codex-darwin-arm64-26.513.20950.zip
 ```
 
 Replace an existing output directory:
@@ -78,7 +78,7 @@ npm run repackage -- --force
 Smoke-test a specific build output:
 
 ```bash
-npm run smoke-test -- --version 26.429.20946
+npm run smoke-test -- --version 26.513.20950
 ```
 
 The build output contains:
