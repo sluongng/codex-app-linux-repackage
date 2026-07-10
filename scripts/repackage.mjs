@@ -79,17 +79,21 @@ const AVATAR_OVERLAY_MOUSE_PASSTHROUGH_CALL =
   "e.setIgnoreMouseEvents(!0,{forward:!0});return";
 const AVATAR_OVERLAY_MOUSE_INTERACTIVE_CALL =
   "e.setIgnoreMouseEvents(!1);return;;;;;;;;;;;;;";
-const AVATAR_OVERLAY_DRAG_METHODS_START =
-  "startDrag(e,{pointerWindowX:t,pointerWindowY:r})";
+const AVATAR_OVERLAY_DRAG_METHODS_START_MARKERS = [
+  "startDrag(e,t,n=!1){",
+  "startDrag(e,{pointerWindowX:t,pointerWindowY:r})",
+  "startDrag(e,{pointerWindowX:t,pointerWindowY:n})",
+];
 const AVATAR_OVERLAY_DRAG_METHODS_END_MARKERS = [
+  "setCompositionState(e,t){",
   "async ensureWindow(e){",
   "async ensureWindow(){",
 ];
 const AVATAR_OVERLAY_LINUX_INTERACTION_METHODS = [
-  "startDrag(e,{pointerWindowX:t,pointerWindowY:r}){}",
-  "moveDrag(e){}",
-  "endDrag(e){}",
-  "throwWithVelocity(e,t,r){}",
+  "startDrag(e,t,n=!1){}",
+  "moveDrag(e,t){}",
+  "endDrag(e,t){}",
+  "throwWithVelocity(e,t,n,r=!1){}",
   "startMascotResize(e,t){}",
   "moveMascotResize(e,t){}",
   "endMascotResize(e,t){}",
@@ -100,7 +104,9 @@ const AVATAR_OVERLAY_OPEN_MAIN_WINDOW_CALL =
 const AVATAR_OVERLAY_DISABLED_OPEN_MAIN_WINDOW_CALL =
   "r&&i.startedOnMascot&&!i.hasMoved&&false&&f.dispatchMessage(`open-current-main-window`,{})";
 const AVATAR_OVERLAY_OPEN_MAIN_WINDOW_DISPATCH =
-  "dispatchMessage(`open-current-main-window`,{})";
+  "dispatchMessage(`open-current-main-window`,";
+const WORK_LOUDER_NODE_HID_MODULE =
+  "node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/node_modules/node-hid";
 
 function relativeParts(moduleId) {
   return moduleId.split("/").filter(Boolean);
@@ -178,6 +184,70 @@ function readJsonFromAsar(archivePath, filePath) {
   return JSON.parse(asar.extractFile(archivePath, filePath).toString("utf8"));
 }
 
+function readJsonFromAsarOrNull(archivePath, filePath) {
+  try {
+    return readJsonFromAsar(archivePath, filePath);
+  } catch (error) {
+    if (String(error?.message ?? "").includes("was not found in this archive")) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+function normalizeExactPackageVersion(version, packageName) {
+  if (typeof version !== "string") {
+    return null;
+  }
+
+  const match = version.match(/^(?:npm:[^@]+@)?(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)$/);
+  if (match == null) {
+    fail(
+      `Expected ${packageName} to be pinned to an exact version, but found ${JSON.stringify(
+        version,
+      )}.`,
+    );
+  }
+
+  return match[1];
+}
+
+async function readLegacyElectronFrameworkInfo(appContentsDir) {
+  const plistPath = join(
+    appContentsDir,
+    "Frameworks",
+    "Electron Framework.framework",
+    "Versions",
+    "A",
+    "Resources",
+    "Info.plist",
+  );
+  if (!(await pathExists(plistPath))) {
+    return null;
+  }
+
+  return plist.parse(await readFile(plistPath, "utf8"));
+}
+
+async function resolveElectronVersion(appContentsDir, packageJson) {
+  const packageVersion = normalizeExactPackageVersion(
+    packageJson.devDependencies?.electron ?? packageJson.dependencies?.electron,
+    "electron",
+  );
+  if (packageVersion != null) {
+    return packageVersion;
+  }
+
+  const frameworkInfo = await readLegacyElectronFrameworkInfo(appContentsDir);
+  if (frameworkInfo == null) {
+    fail(
+      "Could not determine Electron version from package.json or legacy Electron Framework Info.plist.",
+    );
+  }
+
+  return String(frameworkInfo.CFBundleShortVersionString ?? frameworkInfo.CFBundleVersion);
+}
+
 function npmPlatformFieldAllows(field, currentValue) {
   if (!Array.isArray(field) || field.length === 0) {
     return true;
@@ -212,7 +282,16 @@ async function discoverNativeModules(appAsarPath, unpackedDir) {
   const skippedModules = [];
   for (const candidate of await collectNativeModuleCandidates(nodeModulesDir)) {
     const packageJsonPath = `node_modules/${candidate.moduleId}/package.json`;
-    const packageJson = readJsonFromAsar(appAsarPath, packageJsonPath);
+    const packageJson = readJsonFromAsarOrNull(appAsarPath, packageJsonPath);
+    if (packageJson == null) {
+      skippedModules.push({
+        moduleId: candidate.moduleId,
+        version: "unknown",
+        releaseArtifacts: candidate.releaseArtifacts,
+        missingPackageJson: packageJsonPath,
+      });
+      continue;
+    }
     const moduleInfo = {
       moduleId: candidate.moduleId,
       version: String(packageJson.version),
@@ -325,7 +404,7 @@ if [[ -d "\${WEBVIEW_DIR}" ]]; then
   ELECTRON_RUN_AS_NODE=1 "\${ROOT_DIR}/electron" "\${ROOT_DIR}/serve-webview.mjs" "\${WEBVIEW_DIR}" "\${WEBVIEW_PORT}" &
   WEBVIEW_PID=$!
   if ! wait_for_webview; then
-    echo "Failed to start the local Codex webview server on port \${WEBVIEW_PORT}." >&2
+    echo "Failed to start the local ChatGPT webview server on port \${WEBVIEW_PORT}." >&2
     exit 1
   fi
   sleep 0.5
@@ -567,6 +646,74 @@ async function createBuildWorkspace(buildDir, electronVersion, nativeModules) {
   });
 }
 
+async function addWorkLouderNodeHidLinuxPrebuilds(extractedAsarDir, installDir) {
+  const bundledPackagePath = join(extractedAsarDir, WORK_LOUDER_NODE_HID_MODULE, "package.json");
+  if (!(await pathExists(bundledPackagePath))) {
+    return [];
+  }
+
+  const packageJson = JSON.parse(await readFile(bundledPackagePath, "utf8"));
+  const version = String(packageJson.version);
+  const prebuildPrefix = `HID_hidraw-linux-${process.arch}`;
+  const bundledPrebuildsDir = join(extractedAsarDir, WORK_LOUDER_NODE_HID_MODULE, "prebuilds");
+  if (await pathExists(bundledPrebuildsDir)) {
+    const alreadyBundled = (await readdir(bundledPrebuildsDir, { withFileTypes: true })).some(
+      (entry) => entry.isDirectory() && entry.name.startsWith(prebuildPrefix),
+    );
+    if (alreadyBundled) {
+      return [];
+    }
+  }
+
+  await ensureDir(installDir);
+  await writeFile(
+    join(installDir, "package.json"),
+    JSON.stringify(
+      {
+        private: true,
+      },
+      null,
+      2,
+    ),
+  );
+  await run("npm", ["install", "--ignore-scripts", "--no-package-lock", `node-hid@${version}`], {
+    cwd: installDir,
+  });
+
+  const installedPrebuildsDir = join(installDir, "node_modules", "node-hid", "prebuilds");
+  const added = [];
+  for (const entry of await readdir(installedPrebuildsDir, { withFileTypes: true })) {
+    if (!entry.isDirectory() || !entry.name.startsWith(prebuildPrefix)) {
+      continue;
+    }
+    const sourceDir = join(installedPrebuildsDir, entry.name);
+    for (const artifact of await readdir(sourceDir, { withFileTypes: true })) {
+      if (!artifact.isFile() || !artifact.name.endsWith(".node")) {
+        continue;
+      }
+      const relativeArtifact = join("prebuilds", entry.name, artifact.name);
+      const destination = join(extractedAsarDir, WORK_LOUDER_NODE_HID_MODULE, relativeArtifact);
+      await copyFileWithMode(join(sourceDir, artifact.name), destination);
+      added.push({
+        moduleId: WORK_LOUDER_NODE_HID_MODULE,
+        version,
+        artifact: join(WORK_LOUDER_NODE_HID_MODULE, relativeArtifact),
+      });
+    }
+  }
+
+  if (added.length === 0) {
+    fail(`Could not find node-hid ${prebuildPrefix} native prebuilds for Linux.`);
+  }
+
+  info(
+    `Added Work Louder node-hid Linux prebuild(s): ${added
+      .map((artifact) => artifact.artifact)
+      .join(", ")}`,
+  );
+  return added;
+}
+
 async function replaceNativeArtifacts(builtNodeModulesDir, outputUnpackedDir, nativeModules) {
   const missingArtifacts = [];
 
@@ -613,11 +760,18 @@ async function patchAvatarOverlayMousePassthrough(appAsarPath) {
 }
 
 function patchAvatarOverlayDragMethods(archive) {
-  const startMarker = Buffer.from(AVATAR_OVERLAY_DRAG_METHODS_START);
-  const startIndex = archive.indexOf(startMarker);
-  if (startIndex < 0) {
+  const matches = AVATAR_OVERLAY_DRAG_METHODS_START_MARKERS.flatMap((marker) => {
+    const markerBuffer = Buffer.from(marker);
+    const startIndex = archive.indexOf(markerBuffer);
+    return startIndex < 0 ? [] : [{ markerBuffer, startIndex }];
+  });
+  if (matches.length === 0) {
     fail("Could not find avatar overlay drag methods in app.asar.");
   }
+  if (matches.length > 1) {
+    fail("Avatar overlay drag methods matched more than once in app.asar.");
+  }
+  const [{ markerBuffer: startMarker, startIndex }] = matches;
   if (archive.indexOf(startMarker, startIndex + startMarker.length) >= 0) {
     fail("Avatar overlay drag methods matched more than once in app.asar.");
   }
@@ -671,7 +825,7 @@ async function patchAvatarOverlayWebviewForLinux(webviewDir) {
   let patchedCount = 0;
 
   for (const file of files) {
-    if (!file.endsWith(".js")) {
+    if (!file.endsWith(".js") || !basename(file).includes("avatar-overlay")) {
       continue;
     }
     let source = await readFile(file, "utf8");
@@ -690,6 +844,14 @@ async function patchAvatarOverlayWebviewForLinux(webviewDir) {
       if (patched.includes(AVATAR_OVERLAY_OPEN_MAIN_WINDOW_CALL)) {
         fail("Avatar overlay open-main-window call matched more than once in webview.");
       }
+    } else if (source.includes("onMascotClick")) {
+      patched = source.replace(
+        /onMascotClick:\(\)=>\{[A-Za-z_$][\w$]*\.dispatchMessage\(`open-current-main-window`,\{[^{}]*\}\)\}/,
+        "onMascotClick:()=>{}",
+      );
+      if (patched === source) {
+        fail("Could not patch avatar overlay native mascot click handler in webview.");
+      }
     } else {
       const dispatchIndex = source.indexOf(AVATAR_OVERLAY_OPEN_MAIN_WINDOW_DISPATCH);
       if (source.indexOf(AVATAR_OVERLAY_OPEN_MAIN_WINDOW_DISPATCH, dispatchIndex + 1) >= 0) {
@@ -701,7 +863,7 @@ async function patchAvatarOverlayWebviewForLinux(webviewDir) {
       if (
         guardIndex < 0 ||
         !guardPrefix.includes(".startedOnMascot") ||
-        !guardPrefix.includes(".hasMoved")
+        (!guardPrefix.includes(".hasMoved") && !guardPrefix.includes("!"))
       ) {
         fail("Could not find avatar overlay mascot-click guard in webview.");
       }
@@ -711,11 +873,28 @@ async function patchAvatarOverlayWebviewForLinux(webviewDir) {
     patchedCount += 1;
   }
 
-  if (patchedCount !== 1) {
-    fail(`Expected to patch one avatar overlay webview asset, patched ${patchedCount}.`);
+  if (patchedCount === 0) {
+    fail("Expected to patch at least one avatar overlay webview asset.");
   }
 
   info("Patched avatar overlay mascot click handling for Linux.");
+}
+
+async function findAppContentsDir(extractedZipDir) {
+  const appBundles = (await readdir(extractedZipDir, { withFileTypes: true }))
+    .filter((entry) => entry.isDirectory() && entry.name.endsWith(".app"))
+    .map((entry) => entry.name)
+    .sort();
+
+  if (appBundles.length !== 1) {
+    fail(
+      `Expected exactly one macOS app bundle in ${extractedZipDir}, found: ${
+        appBundles.join(", ") || "none"
+      }`,
+    );
+  }
+
+  return join(extractedZipDir, appBundles[0], "Contents");
 }
 
 async function main() {
@@ -762,28 +941,21 @@ async function main() {
     info(`Extracting ${basename(sourceZipPath)} into ${extractedZipDir}`);
     await run("unzip", ["-q", sourceZipPath, "-d", extractedZipDir]);
 
-    const appContentsDir = join(extractedZipDir, "Codex.app", "Contents");
+    const appContentsDir = await findAppContentsDir(extractedZipDir);
     const upstreamResourcesDir = join(appContentsDir, "Resources");
     const upstreamUnpackedDir = join(upstreamResourcesDir, "app.asar.unpacked");
     const upstreamAsarPath = join(upstreamResourcesDir, "app.asar");
 
     const appInfo = plist.parse(await readFile(join(appContentsDir, "Info.plist"), "utf8"));
-    const electronFrameworkInfo = plist.parse(
-      await readFile(
-        join(
-          appContentsDir,
-          "Frameworks",
-          "Electron Framework.framework",
-          "Versions",
-          "A",
-          "Resources",
-          "Info.plist",
-        ),
-        "utf8",
-      ),
-    );
-
     const packageJson = readJsonFromAsar(upstreamAsarPath, "package.json");
+    const bundleUrlTypes = Array.isArray(appInfo.CFBundleURLTypes)
+      ? appInfo.CFBundleURLTypes
+      : [];
+    const bundleUrlSchemes = bundleUrlTypes.flatMap((urlType) =>
+      Array.isArray(urlType.CFBundleURLSchemes)
+        ? urlType.CFBundleURLSchemes.map(String)
+        : [],
+    );
     const { nativeModules, skippedNativeModules } = await discoverNativeModules(
       upstreamAsarPath,
       upstreamUnpackedDir,
@@ -801,10 +973,7 @@ async function main() {
 
     const appVersion = String(appInfo.CFBundleShortVersionString ?? packageJson.version);
     const buildVersion = String(appInfo.CFBundleVersion ?? release?.buildVersion ?? "unknown");
-    const electronVersion = String(
-      electronFrameworkInfo.CFBundleShortVersionString ??
-        electronFrameworkInfo.CFBundleVersion,
-    );
+    const electronVersion = await resolveElectronVersion(appContentsDir, packageJson);
     const outputDir =
       options.outputDir ?? resolve(PROJECT_ROOT, "out", `codex-linux-${appVersion}`);
 
@@ -864,10 +1033,19 @@ async function main() {
     if (await pathExists(defaultAppAsar)) {
       await removeIfExists(defaultAppAsar);
     }
-    await patchAvatarOverlayForLinux(join(outputResourcesDir, "app.asar"));
 
     const extractedAsarDir = join(workDir, "asar");
-    asar.extractAll(upstreamAsarPath, extractedAsarDir);
+    const outputAppAsarPath = join(outputResourcesDir, "app.asar");
+    asar.extractAll(outputAppAsarPath, extractedAsarDir);
+    const addedNativePrebuilds = await addWorkLouderNodeHidLinuxPrebuilds(
+      extractedAsarDir,
+      join(workDir, "node-hid-prebuild"),
+    );
+    if (addedNativePrebuilds.length > 0) {
+      await asar.createPackage(extractedAsarDir, outputAppAsarPath);
+    }
+    await patchAvatarOverlayForLinux(outputAppAsarPath);
+
     const extractedWebviewDir = join(extractedAsarDir, "webview");
     if (await pathExists(extractedWebviewDir)) {
       const outputWebviewDir = join(outputDir, "content", "webview");
@@ -890,6 +1068,18 @@ async function main() {
       appVersion,
       buildVersion,
       electronVersion,
+      upstreamApp: {
+        displayName: String(
+          appInfo.CFBundleDisplayName ?? appInfo.CFBundleName ?? packageJson.productName,
+        ),
+        bundleName: String(appInfo.CFBundleName ?? packageJson.productName),
+        bundleIdentifier: String(appInfo.CFBundleIdentifier),
+        executable: String(appInfo.CFBundleExecutable),
+        urlSchemes: bundleUrlSchemes,
+        appBrand: String(packageJson.codexAppBrand ?? ""),
+        packageName: String(packageJson.name),
+        productName: String(packageJson.productName),
+      },
       source: release ?? {
         shortVersion: options.version ?? appVersion,
         enclosureUrl: sourceZipPath,
@@ -907,8 +1097,12 @@ async function main() {
         version: nativeModule.version,
         os: nativeModule.os,
         cpu: nativeModule.cpu,
+        ...(nativeModule.missingPackageJson == null
+          ? {}
+          : { missingPackageJson: nativeModule.missingPackageJson }),
         preservedArtifacts: nativeModule.releaseArtifacts,
       })),
+      addedNativePrebuilds,
       runtimeWrappers: {
         codex: "resources/codex",
         rg: "resources/rg",

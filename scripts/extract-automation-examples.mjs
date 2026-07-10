@@ -13,7 +13,7 @@ const AUTOMATION_TEMPLATE_RE =
   /\{id:`([^`]+)`,promptMessage:(?:[\w$]+\()?\{id:`([^`]+)`,defaultMessage:`([^`]*)`,description:`([^`]*)`\}\)?,automationPromptMessage:(?:[\w$]+\()?\{id:`([^`]+)`,defaultMessage:`([^`]*)`,description:`([^`]*)`\}\)?,iconName:`([^`]+)`,mode:`([^`]+)`,isAutomation:!0\}/gs;
 
 const AUTOMATION_MESSAGE_RE =
-  /id:`settings\.automations\.([^`]+)`,defaultMessage:`([^`]*)`,description:`([^`]*)`/g;
+  /id:`([^`]*(?:automation|automations)[^`]*)`,defaultMessage:`([^`]*)`,description:`([^`]*)`/gi;
 
 function parseArgs(argv) {
   const options = {
@@ -73,11 +73,7 @@ async function resolveOutputDir(options) {
   fail("Multiple output directories found. Pass --dir or --version.");
 }
 
-async function findAssetBySource(outputDir, entryMatcher, sourceMatcher, label) {
-  return (await findAssetsBySource(outputDir, entryMatcher, sourceMatcher, label))[0];
-}
-
-async function findAssetsBySource(outputDir, entryMatcher, sourceMatcher, label) {
+async function findAssetsBySource(outputDir, entryMatcher, sourceMatcher) {
   const assetsDir = join(outputDir, "content", "webview", "assets");
   if (!(await pathExists(assetsDir))) {
     fail(`Missing assets directory: ${assetsDir}`);
@@ -99,15 +95,12 @@ async function findAssetsBySource(outputDir, entryMatcher, sourceMatcher, label)
     }
   }
 
-  if (matches.length > 0) {
-    return matches;
-  }
-
-  fail(`Could not find ${label} in ${assetsDir}`);
+  return matches;
 }
 
 function extractAutomationTemplates(source) {
   const templates = [];
+  AUTOMATION_TEMPLATE_RE.lastIndex = 0;
 
   let match;
   while ((match = AUTOMATION_TEMPLATE_RE.exec(source)) != null) {
@@ -126,29 +119,26 @@ function extractAutomationTemplates(source) {
     });
   }
 
-  if (templates.length === 0) {
-    fail("No automation templates found in the compiled home bundle.");
-  }
-
   return templates;
 }
 
 function extractDialogMessages(source) {
   const messages = [];
   const seen = new Set();
+  AUTOMATION_MESSAGE_RE.lastIndex = 0;
 
   let match;
   while ((match = AUTOMATION_MESSAGE_RE.exec(source)) != null) {
-    const key = match[1];
-    if (seen.has(key)) {
+    const messageId = match[1];
+    if (seen.has(messageId)) {
       continue;
     }
-    seen.add(key);
+    seen.add(messageId);
     messages.push({
       description: match[3],
-      key,
+      key: messageId.replace(/^settings\.automations\./, ""),
       message: match[2],
-      messageId: `settings.automations.${key}`,
+      messageId,
     });
   }
 
@@ -157,6 +147,10 @@ function extractDialogMessages(source) {
   }
 
   return messages;
+}
+
+function sourceHasAutomationMessages(source) {
+  return /id:`[^`]*(?:automation|automations)[^`]*`,defaultMessage:`/i.test(source);
 }
 
 function renderTemplateMarkdown(template) {
@@ -194,12 +188,16 @@ function renderReadme({
   const dialogAssetList = dialogAssetPaths
     .map((assetPath) => `- \`${relative(PROJECT_ROOT, assetPath)}\``)
     .join("\n");
+  const templateSource =
+    homeAssetPath == null
+      ? "No legacy compiled automation template cards were present in this release."
+      : `Extracted from the compiled home bundle: \`${relative(PROJECT_ROOT, homeAssetPath)}\``;
 
-  return `# Automation Examples
+  return `# Scheduled Task and Automation Metadata
 
 Latest extracted app version: \`${version}\`
 
-Extracted from the compiled home bundle: \`${relative(PROJECT_ROOT, homeAssetPath)}\`
+${templateSource}
 
 Automation UI metadata extracted from:
 
@@ -207,15 +205,15 @@ ${dialogAssetList}
 
 Output directory: \`${relative(PROJECT_ROOT, outputDir)}\`
 
-Found ${templates.length} automation template cards from the "Start with a template" UI.
+Found ${templates.length} legacy automation template cards from the "Start with a template" UI.
 
 Found ${uiMessages.length} automation UI messages.
 
 Files:
 
-- \`templates.json\`: machine-readable template manifest
-- \`templates/\`: one markdown file per automation template
-- \`ui-messages.json\`: automation UI labels, placeholders, and warnings
+- \`templates.json\`: machine-readable legacy template manifest
+- \`templates/\`: one markdown file per legacy automation template
+- \`ui-messages.json\`: Scheduled Task and automation UI labels, placeholders, and warnings
 `;
 }
 
@@ -232,21 +230,25 @@ async function main() {
   const extractionDir = options.outputDir;
   const templatesDir = join(extractionDir, "templates");
 
-  const homeAsset = await findAssetBySource(
+  const homeAssets = await findAssetsBySource(
     outputDir,
-    (entry) => /^(automation-dialog|index)-.*\.js$/i.test(entry),
+    () => true,
     (source) => source.includes("home.useCases.") && source.includes("isAutomation:!0"),
-    "automation templates bundle",
   );
+  if (homeAssets.length > 1) {
+    fail(`Expected at most one automation templates bundle, found ${homeAssets.length}.`);
+  }
+  const homeAsset = homeAssets[0] ?? null;
   const dialogAssets = await findAssetsBySource(
     outputDir,
-    (entry) => /^(automation-dialog|automations-page|composer|index)-.*\.js$/i.test(entry),
-    (source) =>
-      source.includes("id:`settings.automations.") && source.includes("defaultMessage:"),
-    "automation UI message bundle",
+    () => true,
+    sourceHasAutomationMessages,
   );
+  if (dialogAssets.length === 0) {
+    fail(`Could not find automation UI message bundle in ${outputDir}`);
+  }
 
-  const templates = extractAutomationTemplates(homeAsset.source);
+  const templates = homeAsset == null ? [] : extractAutomationTemplates(homeAsset.source);
   const uiMessages = extractDialogMessages(
     dialogAssets.map((dialogAsset) => dialogAsset.source).join("\n"),
   );
@@ -260,8 +262,9 @@ async function main() {
       {
         appVersion: version,
         extractedAt: new Date().toISOString(),
-        sourceAsset: relative(PROJECT_ROOT, homeAsset.assetPath),
-        sourceType: "compiled-webview-home-bundle",
+        sourceAsset: homeAsset == null ? null : relative(PROJECT_ROOT, homeAsset.assetPath),
+        sourceType:
+          homeAsset == null ? "compiled-webview-assets" : "compiled-webview-home-bundle",
         templateCount: templates.length,
         templates,
       },
@@ -291,7 +294,7 @@ async function main() {
     join(extractionDir, "README.md"),
     renderReadme({
       dialogAssetPaths: dialogAssets.map((dialogAsset) => dialogAsset.assetPath),
-      homeAssetPath: homeAsset.assetPath,
+      homeAssetPath: homeAsset?.assetPath ?? null,
       outputDir: extractionDir,
       templates,
       uiMessages,
@@ -308,7 +311,9 @@ async function main() {
     );
   }
 
-  info(`Extracted ${templates.length} automation template(s) to ${extractionDir}`);
+  info(
+    `Extracted ${uiMessages.length} Scheduled Task message(s) and ${templates.length} legacy template(s) to ${extractionDir}`,
+  );
 }
 
 await main();

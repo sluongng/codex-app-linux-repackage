@@ -24,7 +24,7 @@ export const DEFAULT_APPCAST_URL =
   "https://persistent.oaistatic.com/codex-app-prod/appcast.xml";
 
 const FETCH_HEADERS = {
-  "user-agent": "codex-app-linux-repacker/0.1",
+  "user-agent": "chatgpt-desktop-linux-repacker/0.1",
 };
 
 function asArray(value) {

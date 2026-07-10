@@ -87,6 +87,13 @@ async function assertElf(pathname) {
   }
 }
 
+async function assertAssetMatching(assetsDir, matcher, label) {
+  const entries = await readdir(assetsDir);
+  if (!entries.some((entry) => matcher.test(entry))) {
+    fail(`Missing ${label} asset in ${assetsDir}`);
+  }
+}
+
 async function fetchOnce(url) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 500);
@@ -246,6 +253,7 @@ async function main() {
   const startScriptPath = join(outputDir, "start.sh");
   const serveWebviewPath = join(outputDir, "serve-webview.mjs");
   const webviewDir = join(outputDir, "content", "webview");
+  const webviewAssetsDir = join(webviewDir, "assets");
   const webviewPort = await allocatePort();
   const rendererUrls = [
     `http://127.0.0.1:${webviewPort}/`,
@@ -257,6 +265,7 @@ async function main() {
   await assertExists(startScriptPath, "launcher");
   await assertExists(serveWebviewPath, "webview server");
   await assertExists(webviewDir, "webview directory");
+  await assertExists(webviewAssetsDir, "webview assets directory");
 
   const webviewEntries = await readdir(webviewDir);
   if (webviewEntries.length === 0) {
@@ -266,6 +275,30 @@ async function main() {
   const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
   if (manifest.renderer?.url !== "http://127.0.0.1:5175") {
     fail(`Unexpected renderer URL in manifest: ${manifest.renderer?.url ?? "missing"}`);
+  }
+  if (manifest.upstreamApp?.bundleIdentifier !== "com.openai.codex") {
+    fail(
+      `Unexpected upstream bundle identifier: ${manifest.upstreamApp?.bundleIdentifier ?? "missing"}`,
+    );
+  }
+  if (!manifest.upstreamApp?.urlSchemes?.includes("codex")) {
+    fail("Upstream app manifest is missing the codex URL scheme.");
+  }
+  if (manifest.upstreamApp.displayName === "ChatGPT") {
+    if (manifest.upstreamApp.appBrand !== "chatgpt") {
+      fail(`Unexpected unified app brand: ${manifest.upstreamApp.appBrand || "missing"}`);
+    }
+    await assertAssetMatching(
+      webviewAssetsDir,
+      /^chatgpt-conversation-page-.*\.js$/i,
+      "Chat",
+    );
+    await assertAssetMatching(webviewAssetsDir, /^work-home-page-.*\.js$/i, "Work");
+    await assertAssetMatching(
+      webviewAssetsDir,
+      /^(?:local-conversation-page|projects-index-page)-.*\.js$/i,
+      "Codex",
+    );
   }
 
   await assertElf(

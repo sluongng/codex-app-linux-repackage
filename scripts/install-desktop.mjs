@@ -1,5 +1,5 @@
 import { cp, readFile, readdir, realpath, symlink, writeFile } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { homedir } from "node:os";
 import {
   PROJECT_ROOT,
@@ -95,8 +95,12 @@ async function resolveBundledIcon(outputDir) {
   const assetsDir = join(outputDir, "content", "webview", "assets");
   if (await pathExists(assetsDir)) {
     const entries = (await readdir(assetsDir))
-      .filter((entry) => /^app-.*\.png$/i.test(entry))
-      .sort();
+      .filter((entry) => /^(?:icon-chatgpt|app)-.*\.png$/i.test(entry))
+      .sort((left, right) => {
+        const leftPriority = left.startsWith("icon-chatgpt-") ? 0 : 1;
+        const rightPriority = right.startsWith("icon-chatgpt-") ? 0 : 1;
+        return leftPriority - rightPriority || left.localeCompare(right);
+      });
     if (entries.length > 0) {
       return {
         kind: "copy",
@@ -134,15 +138,16 @@ function buildDesktopFile({ execPath, iconPath, installPath }) {
   return `[Desktop Entry]
 Type=Application
 Version=1.0
-Name=Codex
-Comment=OpenAI Codex desktop app
+Name=ChatGPT
+Comment=Chat, Work, and Codex in one desktop app
 Exec=${execPath} %U
 TryExec=${execPath}
 Path=${installPath}
 Icon=${iconPath}
 Terminal=false
 Categories=Development;IDE;
-Keywords=OpenAI;Codex;AI;Development;
+Keywords=OpenAI;ChatGPT;Work;Codex;AI;Development;
+MimeType=x-scheme-handler/codex;
 StartupNotify=true
 `;
 }
@@ -153,9 +158,9 @@ function buildDesktopLauncher({ codexPath, rgPath }) {
     "set -euo pipefail",
     "",
     'ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"',
-    'USER_DATA_DIR="${CODEX_APP_USER_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/codex-app/profile}"',
+    'USER_DATA_DIR="${CHATGPT_APP_USER_DATA_DIR:-${CODEX_APP_USER_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/codex-app/profile}}"',
     'mkdir -p "${USER_DATA_DIR}"',
-    'OZONE_PLATFORM="${CODEX_APP_OZONE_PLATFORM:-x11}"',
+    'OZONE_PLATFORM="${CHATGPT_APP_OZONE_PLATFORM:-${CODEX_APP_OZONE_PLATFORM:-x11}}"',
   ];
 
   if (codexPath != null) {
@@ -212,7 +217,7 @@ async function main() {
   const installRoot = options.installRoot;
   const installPath = join(installRoot, manifest.appVersion);
   const currentLink = join(installRoot, "current");
-  const iconDestinationPath = join(installPath, "codex.png");
+  const iconDestinationPath = join(installPath, "chatgpt.png");
   const desktopLauncherPath = join(installPath, "desktop-launch.sh");
   const bundledIcon = await resolveBundledIcon(outputDir);
   const systemCodexPath = await findExecutableOnPath("codex");
@@ -275,16 +280,24 @@ async function main() {
     options.desktopFile,
     buildDesktopFile({
       execPath: join(currentLink, "desktop-launch.sh"),
-      iconPath: join(currentLink, "codex.png"),
+      iconPath: join(currentLink, "chatgpt.png"),
       installPath: currentLink,
     }),
   );
 
   await run("desktop-file-validate", [options.desktopFile]);
   await run("update-desktop-database", [dirname(options.desktopFile)]);
+  const xdgMimePath = await findExecutableOnPath("xdg-mime");
+  if (xdgMimePath != null) {
+    await run(xdgMimePath, [
+      "default",
+      basename(options.desktopFile),
+      "x-scheme-handler/codex",
+    ]);
+  }
 
   const resolvedDesktopFile = await realpath(options.desktopFile).catch(() => options.desktopFile);
-  console.log(`Installed Codex ${manifest.appVersion} to ${installPath}`);
+  console.log(`Installed ChatGPT ${manifest.appVersion} to ${installPath}`);
   console.log(`Desktop entry: ${resolvedDesktopFile}`);
   console.log(`Launcher: ${join(currentLink, "desktop-launch.sh")}`);
 }

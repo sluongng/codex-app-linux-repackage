@@ -1,9 +1,9 @@
 {
-  "name": "codex-app-linux-repacker",
+  "name": "chatgpt-desktop-linux-repacker",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Repackage the upstream macOS Codex desktop app to run on Linux.",
+  "description": "Repackage the unified ChatGPT desktop app for Linux from its Codex-lineage release feed.",
   "scripts": {
     "extract-automation-examples": "node scripts/extract-automation-examples.mjs",
     "install-desktop": "node scripts/install-desktop.mjs",

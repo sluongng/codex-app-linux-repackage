@@ -1,109 +1,303 @@
 {
-  "appVersion": "26.513.20950",
-  "extractedAt": "2026-05-15T07:17:32.828Z",
-  "sourceAsset": "out/codex-linux-26.513.20950/content/webview/assets/automation-dialog-C1bBU3Pl.js",
+  "appVersion": "26.707.31428",
+  "extractedAt": "2026-07-10T10:10:47.117Z",
+  "sourceAsset": "out/codex-linux-26.707.31428/content/webview/assets/app-initial~app-main~onboarding-page-zcfEkMl-.js",
   "sourceAssets": [
-    "out/codex-linux-26.513.20950/content/webview/assets/automation-dialog-C1bBU3Pl.js",
-    "out/codex-linux-26.513.20950/content/webview/assets/automations-page-B7ZjjArM.js"
+    "out/codex-linux-26.707.31428/content/webview/assets/app-initial~app-main~onboarding-page-zcfEkMl-.js",
+    "out/codex-linux-26.707.31428/content/webview/assets/app-initial~app-main~onboarding-page~hotkey-window-thread-page~quick-chat-window-page~chatg~k0ede4gb-C17KDkOa.js",
+    "out/codex-linux-26.707.31428/content/webview/assets/app-initial~app-main~page-CtX5-cLy.js",
+    "out/codex-linux-26.707.31428/content/webview/assets/app-initial~app-main~projects-index-page~remote-conversation-page-CFT2LLOB.js",
+    "out/codex-linux-26.707.31428/content/webview/assets/automations-page-8ATTosbw.js",
+    "out/codex-linux-26.707.31428/content/webview/assets/codex-micro-settings-B_VKXWEo.js",
+    "out/codex-linux-26.707.31428/content/webview/assets/data-controls-CE14yfYB.js",
+    "out/codex-linux-26.707.31428/content/webview/assets/local-conversation-page-DufPiOVP.js",
+    "out/codex-linux-26.707.31428/content/webview/assets/local-conversation-thread-imfIBhy0.js",
+    "out/codex-linux-26.707.31428/content/webview/assets/thread-overflow-menu-lJ6-wC_F.js"
   ],
   "sourceType": "compiled-webview-automation-ui-bundles",
-  "messageCount": 102,
+  "messageCount": 255,
   "messages": [
     {
-      "description": "Tooltip on the disabled automation create button combining all missing requirements",
-      "key": "saveTooltip.combined.create",
-      "message": "{requirements} to create",
-      "messageId": "settings.automations.saveTooltip.combined.create"
+      "description": "Right panel tab title for a scheduled task opened from a trigger message",
+      "key": "localConversation.heartbeatUserMessage.automationTabTitle",
+      "message": "Scheduled task",
+      "messageId": "localConversation.heartbeatUserMessage.automationTabTitle"
     },
     {
-      "description": "Tooltip on the disabled automation save button combining all missing requirements",
-      "key": "saveTooltip.combined.save",
-      "message": "{requirements} to save",
-      "messageId": "settings.automations.saveTooltip.combined.save"
+      "description": "Label shown above a user-message-style scheduled task trigger",
+      "key": "localConversation.heartbeatUserMessage.automation",
+      "message": "Sent by scheduled task",
+      "messageId": "localConversation.heartbeatUserMessage.automation"
     },
     {
-      "description": "Tooltip requirement shown first when the automation title is missing",
-      "key": "saveTooltip.name.initial",
-      "message": "Create title",
-      "messageId": "settings.automations.saveTooltip.name.initial"
+      "description": "Menu item to create a new scheduled task attached to a local task",
+      "key": "sidebarElectron.addAutomation",
+      "message": "Add scheduled task…",
+      "messageId": "sidebarElectron.addAutomation"
     },
     {
-      "description": "Tooltip requirement shown after the first item when the automation title is missing",
-      "key": "saveTooltip.name.continuation",
-      "message": "create title",
-      "messageId": "settings.automations.saveTooltip.name.continuation"
+      "description": "Menu item to edit the scheduled task attached to a local task",
+      "key": "sidebarElectron.editAutomation",
+      "message": "Edit scheduled task…",
+      "messageId": "sidebarElectron.editAutomation"
     },
     {
-      "description": "Tooltip requirement shown first when the automation prompt is missing",
-      "key": "saveTooltip.prompt.initial",
-      "message": "Add prompt",
-      "messageId": "settings.automations.saveTooltip.prompt.initial"
+      "description": "Plural Sunday label for schedule summaries",
+      "key": "scheduleSummary.sundaysLabel",
+      "message": "Sundays",
+      "messageId": "settings.automations.scheduleSummary.sundaysLabel"
     },
     {
-      "description": "Tooltip requirement shown after the first item when the automation prompt is missing",
-      "key": "saveTooltip.prompt.continuation",
-      "message": "add prompt",
-      "messageId": "settings.automations.saveTooltip.prompt.continuation"
+      "description": "Plural Monday label for schedule summaries",
+      "key": "scheduleSummary.mondaysLabel",
+      "message": "Mondays",
+      "messageId": "settings.automations.scheduleSummary.mondaysLabel"
     },
     {
-      "description": "Tooltip requirement shown first when the automation project selection is missing",
-      "key": "saveTooltip.cwd.initial",
-      "message": "Select project",
-      "messageId": "settings.automations.saveTooltip.cwd.initial"
+      "description": "Plural Tuesday label for schedule summaries",
+      "key": "scheduleSummary.tuesdaysLabel",
+      "message": "Tuesdays",
+      "messageId": "settings.automations.scheduleSummary.tuesdaysLabel"
     },
     {
-      "description": "Tooltip requirement shown after the first item when the automation project selection is missing",
-      "key": "saveTooltip.cwd.continuation",
-      "message": "select project",
-      "messageId": "settings.automations.saveTooltip.cwd.continuation"
+      "description": "Plural Wednesday label for schedule summaries",
+      "key": "scheduleSummary.wednesdaysLabel",
+      "message": "Wednesdays",
+      "messageId": "settings.automations.scheduleSummary.wednesdaysLabel"
     },
     {
-      "description": "Tooltip requirement shown first when the heartbeat automation thread selection is missing",
-      "key": "saveTooltip.thread.initial",
-      "message": "Select chat",
-      "messageId": "settings.automations.saveTooltip.thread.initial"
+      "description": "Plural Thursday label for schedule summaries",
+      "key": "scheduleSummary.thursdaysLabel",
+      "message": "Thursdays",
+      "messageId": "settings.automations.scheduleSummary.thursdaysLabel"
     },
     {
-      "description": "Tooltip requirement shown after the first item when the heartbeat automation thread selection is missing",
-      "key": "saveTooltip.thread.continuation",
-      "message": "select chat",
-      "messageId": "settings.automations.saveTooltip.thread.continuation"
+      "description": "Plural Friday label for schedule summaries",
+      "key": "scheduleSummary.fridaysLabel",
+      "message": "Fridays",
+      "messageId": "settings.automations.scheduleSummary.fridaysLabel"
     },
     {
-      "description": "Tooltip requirement shown first when the automation execution environment is missing",
-      "key": "saveTooltip.executionEnvironment.initial",
-      "message": "Choose where to run it",
-      "messageId": "settings.automations.saveTooltip.executionEnvironment.initial"
+      "description": "Plural Saturday label for schedule summaries",
+      "key": "scheduleSummary.saturdaysLabel",
+      "message": "Saturdays",
+      "messageId": "settings.automations.scheduleSummary.saturdaysLabel"
     },
     {
-      "description": "Tooltip requirement shown after the first item when the automation execution environment is missing",
-      "key": "saveTooltip.executionEnvironment.continuation",
-      "message": "choose where to run it",
-      "messageId": "settings.automations.saveTooltip.executionEnvironment.continuation"
+      "description": "Weekday label for schedule summaries",
+      "key": "scheduleSummary.weekdaysLabel",
+      "message": "weekdays",
+      "messageId": "settings.automations.scheduleSummary.weekdaysLabel"
     },
     {
-      "description": "Tooltip requirement shown first when the automation model is missing",
-      "key": "saveTooltip.model.initial",
-      "message": "Choose a model",
-      "messageId": "settings.automations.saveTooltip.model.initial"
+      "description": "Weekend label for schedule summaries",
+      "key": "scheduleSummary.weekendsLabel",
+      "message": "weekends",
+      "messageId": "settings.automations.scheduleSummary.weekendsLabel"
     },
     {
-      "description": "Tooltip requirement shown after the first item when the automation model is missing",
-      "key": "saveTooltip.model.continuation",
-      "message": "choose a model",
-      "messageId": "settings.automations.saveTooltip.model.continuation"
+      "description": "Automation schedule summary for interval schedule with weekday selection",
+      "key": "scheduleSummary.intervalDays",
+      "message": "{interval} on {days}",
+      "messageId": "settings.automations.scheduleSummary.intervalDays"
     },
     {
-      "description": "Tooltip requirement shown first when the automation schedule is invalid",
-      "key": "saveTooltip.schedule.initial",
-      "message": "Fix the schedule",
-      "messageId": "settings.automations.saveTooltip.schedule.initial"
+      "description": "Automation schedule summary for one-minute interval",
+      "key": "scheduleSummary.intervalMinute",
+      "message": "Every minute",
+      "messageId": "settings.automations.scheduleSummary.intervalMinute"
     },
     {
-      "description": "Tooltip requirement shown after the first item when the automation schedule is invalid",
-      "key": "saveTooltip.schedule.continuation",
-      "message": "fix the schedule",
-      "messageId": "settings.automations.saveTooltip.schedule.continuation"
+      "description": "Automation schedule summary for hourly interval",
+      "key": "scheduleSummary.intervalHourly",
+      "message": "Hourly",
+      "messageId": "settings.automations.scheduleSummary.intervalHourly"
+    },
+    {
+      "description": "Automation schedule summary for daily interval",
+      "key": "scheduleSummary.intervalDaily",
+      "message": "Daily",
+      "messageId": "settings.automations.scheduleSummary.intervalDaily"
+    },
+    {
+      "description": "Automation schedule summary for weekly interval",
+      "key": "scheduleSummary.intervalWeekly",
+      "message": "Weekly",
+      "messageId": "settings.automations.scheduleSummary.intervalWeekly"
+    },
+    {
+      "description": "Automation schedule summary for an exact week interval",
+      "key": "scheduleSummary.intervalWeeks",
+      "message": "Every {count, plural, one {# week} other {# weeks}}",
+      "messageId": "settings.automations.scheduleSummary.intervalWeeks"
+    },
+    {
+      "description": "Automation schedule summary for an exact day interval",
+      "key": "scheduleSummary.intervalDaysExact",
+      "message": "Every {count, plural, one {# day} other {# days}}",
+      "messageId": "settings.automations.scheduleSummary.intervalDaysExact"
+    },
+    {
+      "description": "Automation schedule summary for an exact hour interval",
+      "key": "scheduleSummary.intervalHours",
+      "message": "Every {count, plural, one {# hour} other {# hours}}",
+      "messageId": "settings.automations.scheduleSummary.intervalHours"
+    },
+    {
+      "description": "Automation schedule summary for an exact minute interval",
+      "key": "scheduleSummary.intervalMinutes",
+      "message": "Every {count, plural, one {# minute} other {# minutes}}",
+      "messageId": "settings.automations.scheduleSummary.intervalMinutes"
+    },
+    {
+      "description": "Automation schedule summary for daily schedule every day",
+      "key": "scheduleSummary.daily",
+      "message": "Daily at {time}",
+      "messageId": "settings.automations.scheduleSummary.daily"
+    },
+    {
+      "description": "Automation schedule summary for daily schedule on weekdays",
+      "key": "scheduleSummary.weekdays",
+      "message": "Weekdays at {time}",
+      "messageId": "settings.automations.scheduleSummary.weekdays"
+    },
+    {
+      "description": "Automation schedule summary for daily schedule on weekends",
+      "key": "scheduleSummary.weekends",
+      "message": "Weekends at {time}",
+      "messageId": "settings.automations.scheduleSummary.weekends"
+    },
+    {
+      "description": "Automation schedule summary for weekly schedule",
+      "key": "scheduleSummary.weekly",
+      "message": "{days} at {time}",
+      "messageId": "settings.automations.scheduleSummary.weekly"
+    },
+    {
+      "description": "Label for automation name input",
+      "key": "nameLabel",
+      "message": "Name",
+      "messageId": "settings.automations.nameLabel"
+    },
+    {
+      "description": "Placeholder for scheduled task name input",
+      "key": "namePlaceholder",
+      "message": "Scheduled task title",
+      "messageId": "settings.automations.namePlaceholder"
+    },
+    {
+      "description": "Aria label for the scheduled task sandbox details tooltip trigger",
+      "key": "banner.tooltipLabel",
+      "message": "Scheduled task sandbox details",
+      "messageId": "settings.automations.banner.tooltipLabel"
+    },
+    {
+      "description": "Label for automation prompt input",
+      "key": "promptLabel",
+      "message": "Prompt",
+      "messageId": "settings.automations.promptLabel"
+    },
+    {
+      "description": "Placeholder text for the scheduled task prompt input",
+      "key": "promptPlaceholderChatGPT",
+      "message": "Describe what ChatGPT should do",
+      "messageId": "settings.automations.promptPlaceholderChatGPT"
+    },
+    {
+      "description": "Warning shown in the scheduled task editor when dangerous sandbox mode is enabled",
+      "key": "banner.dangerChatGPT",
+      "message": "Scheduled tasks run with your default sandbox settings, which are currently set to Full Access. Running scheduled tasks in the background with Full Access carries elevated risk, as ChatGPT may modify files, run commands, and access network without asking. Consider updating sandbox settings to workspace write, and using <rulesDocsLink>rules</rulesDocsLink> to selectively define which commands the agent can run with full access.",
+      "messageId": "settings.automations.banner.dangerChatGPT"
+    },
+    {
+      "description": "Follow-up guidance shown in the scheduled task editor when default sandbox mode is read-only",
+      "key": "banner.defaultHowTo.readOnly",
+      "message": "Scheduled tasks run with your default sandbox settings, which are set to read-only. Tool calls will fail if they require modifying files, accessing network, or working with apps on your computer. Consider updating sandbox settings to workspace write.",
+      "messageId": "settings.automations.banner.defaultHowTo.readOnly"
+    },
+    {
+      "description": "Follow-up guidance shown in the scheduled task editor when default sandbox mode is workspace write",
+      "key": "banner.defaultHowTo.default",
+      "message": "Scheduled tasks run with your default sandbox settings. Tool calls will fail if they require modifying files outside the workspace, accessing network, or working with apps on your computer. You can selectively allowlist commands to run outside the sandbox using <rulesDocsLink>rules</rulesDocsLink>.",
+      "messageId": "settings.automations.banner.defaultHowTo.default"
+    },
+    {
+      "description": "Aria label for the scheduled task model dropdown",
+      "key": "model.ariaLabel",
+      "message": "Model",
+      "messageId": "settings.automations.model.ariaLabel"
+    },
+    {
+      "description": "Aria label for the scheduled task reasoning level dropdown",
+      "key": "reasoning.ariaLabel",
+      "message": "Reasoning",
+      "messageId": "settings.automations.reasoning.ariaLabel"
+    },
+    {
+      "description": "Fallback label while automation model options are loading",
+      "key": "model.loading",
+      "message": "Loading model",
+      "messageId": "settings.automations.model.loading"
+    },
+    {
+      "description": "Placeholder for the scheduled task model dropdown",
+      "key": "model.select",
+      "message": "Select model",
+      "messageId": "settings.automations.model.select"
+    },
+    {
+      "description": "Dropdown label for running an automation in an existing task",
+      "key": "destination.existingTask",
+      "message": "Existing task",
+      "messageId": "settings.automations.destination.existingTask"
+    },
+    {
+      "description": "Dropdown label for starting a new task per automation run",
+      "key": "destination.newTask",
+      "message": "New task",
+      "messageId": "settings.automations.destination.newTask"
+    },
+    {
+      "description": "Placeholder for heartbeat automation task selector",
+      "key": "heartbeatThread.placeholder",
+      "message": "Choose a pinned task",
+      "messageId": "settings.automations.heartbeatThread.placeholder"
+    },
+    {
+      "description": "Aria label for heartbeat automation task selector",
+      "key": "heartbeatThread.ariaLabel",
+      "message": "Target task",
+      "messageId": "settings.automations.heartbeatThread.ariaLabel"
+    },
+    {
+      "description": "Header label above heartbeat automation task options",
+      "key": "heartbeatThread.title",
+      "message": "Target task",
+      "messageId": "settings.automations.heartbeatThread.title"
+    },
+    {
+      "description": "Label for a selected heartbeat task that is no longer pinned",
+      "key": "heartbeatThread.unpinned",
+      "message": "unpinned",
+      "messageId": "settings.automations.heartbeatThread.unpinned"
+    },
+    {
+      "description": "Empty-state label when no pinned local tasks are available for scheduled tasks",
+      "key": "heartbeatThread.empty",
+      "message": "Pin a local task first to use scheduled tasks",
+      "messageId": "settings.automations.heartbeatThread.empty"
+    },
+    {
+      "description": "Summary of selected days in a custom monthly schedule",
+      "key": "inbox.automations.customMonthDays.summary",
+      "message": "{count, plural, one {# day} other {# days}}",
+      "messageId": "inbox.automations.customMonthDays.summary"
+    },
+    {
+      "description": "Accessible label for the custom schedule days of month selector",
+      "key": "inbox.automations.customMonthDays.ariaLabel",
+      "message": "Days of the month",
+      "messageId": "inbox.automations.customMonthDays.ariaLabel"
     },
     {
       "description": "Dropdown label for an hourly automation schedule",
@@ -140,42 +334,6 @@
       "key": "scheduleMode.interval",
       "message": "Interval",
       "messageId": "settings.automations.scheduleMode.interval"
-    },
-    {
-      "description": "Dropdown label for running automations locally in the selected project",
-      "key": "executionEnvironment.local",
-      "message": "Local",
-      "messageId": "settings.automations.executionEnvironment.local"
-    },
-    {
-      "description": "Tooltip explaining local execution mode for automations",
-      "key": "executionEnvironment.local.help",
-      "message": "Runs directly in the selected project directory without creating a worktree.",
-      "messageId": "settings.automations.executionEnvironment.local.help"
-    },
-    {
-      "description": "Dropdown label for running automations in a worktree",
-      "key": "executionEnvironment.worktree",
-      "message": "Worktree",
-      "messageId": "settings.automations.executionEnvironment.worktree"
-    },
-    {
-      "description": "Tooltip explaining worktree execution mode for automations",
-      "key": "executionEnvironment.worktree.help",
-      "message": "Runs in a dedicated Git worktree created from the selected project, keeping your current checkout untouched.",
-      "messageId": "settings.automations.executionEnvironment.worktree.help"
-    },
-    {
-      "description": "Dropdown label for sending heartbeat automations into a pinned thread",
-      "key": "destination.thread",
-      "message": "Chat",
-      "messageId": "settings.automations.destination.thread"
-    },
-    {
-      "description": "Tooltip explaining thread destination for automations",
-      "key": "destination.thread.help",
-      "message": "Sends messages directly into the selected chat instead of running in a project folder or worktree",
-      "messageId": "settings.automations.destination.thread.help"
     },
     {
       "description": "RRULE weekday short label",
@@ -262,130 +420,46 @@
       "messageId": "settings.automations.rrule.weekday.sunday"
     },
     {
-      "description": "Label for automation name input",
-      "key": "nameLabel",
-      "message": "Name",
-      "messageId": "settings.automations.nameLabel"
+      "description": "Accessible label for the automation schedule time input",
+      "key": "scheduleTime",
+      "message": "Time",
+      "messageId": "settings.automations.scheduleTime"
     },
     {
-      "description": "Placeholder for automation name input",
-      "key": "namePlaceholder",
-      "message": "Automation title",
-      "messageId": "settings.automations.namePlaceholder"
+      "description": "Accessible label for the custom schedule weekdays selector",
+      "key": "inbox.automations.customWeekdays.ariaLabel",
+      "message": "Days of the week",
+      "messageId": "inbox.automations.customWeekdays.ariaLabel"
     },
     {
-      "description": "Aria label for the automation sandbox details tooltip trigger",
-      "key": "banner.tooltipLabel",
-      "message": "Automation sandbox details",
-      "messageId": "settings.automations.banner.tooltipLabel"
+      "description": "Accessible label for opening the custom schedule RRULE dialog",
+      "key": "inbox.automations.scheduleRule.open",
+      "message": "Edit schedule rule",
+      "messageId": "inbox.automations.scheduleRule.open"
     },
     {
-      "description": "Aria label for the automation modal button when leaving template mode",
-      "key": "modal.collapse",
-      "message": "Collapse automation modal",
-      "messageId": "settings.automations.modal.collapse"
+      "description": "Section label above scheduled task frequency controls",
+      "key": "inbox.automations.frequency",
+      "message": "Frequency",
+      "messageId": "inbox.automations.frequency"
     },
     {
-      "description": "Aria label for the automation modal button when entering template mode",
-      "key": "modal.expand",
-      "message": "Expand automation modal",
-      "messageId": "settings.automations.modal.expand"
+      "description": "Aria label for schedule type dropdown",
+      "key": "scheduleModeLabel",
+      "message": "Repeat schedule",
+      "messageId": "settings.automations.scheduleModeLabel"
     },
     {
-      "description": "Label for the automation modal button when template mode is active",
-      "key": "modal.createNew",
-      "message": "Create new",
-      "messageId": "settings.automations.modal.createNew"
+      "description": "Label for the scheduled task repeat mode row",
+      "key": "inbox.automations.repeat.label",
+      "message": "Repeat",
+      "messageId": "inbox.automations.repeat.label"
     },
     {
-      "description": "Label for the automation modal button when composer mode is active",
-      "key": "modal.useTemplate",
-      "message": "Use template",
-      "messageId": "settings.automations.modal.useTemplate"
-    },
-    {
-      "description": "Title shown in the automation modal when template mode is active",
-      "key": "modal.templateTitle",
-      "message": "Automation templates",
-      "messageId": "settings.automations.modal.templateTitle"
-    },
-    {
-      "description": "Placeholder for cwd select input",
-      "key": "cwdPlaceholder",
-      "message": "Choose a folder",
-      "messageId": "settings.automations.cwdPlaceholder"
-    },
-    {
-      "description": "Tooltip explaining why automation project options only include local projects when remote connections are connected",
-      "key": "projectDropdown.localOnlyTooltip",
-      "message": "Automations can only be created for local projects",
-      "messageId": "settings.automations.projectDropdown.localOnlyTooltip"
-    },
-    {
-      "description": "Dialog title for editing an automation",
-      "key": "dialog.editTitle",
-      "message": "Edit automation",
-      "messageId": "settings.automations.dialog.editTitle"
-    },
-    {
-      "description": "Button label for clearing the automation title and prompt",
-      "key": "clear",
-      "message": "Clear",
-      "messageId": "settings.automations.clear"
-    },
-    {
-      "description": "Label for automation prompt input",
-      "key": "promptLabel",
-      "message": "Prompt",
-      "messageId": "settings.automations.promptLabel"
-    },
-    {
-      "description": "Placeholder text for automations prompt input",
-      "key": "promptPlaceholder",
-      "message": "Add prompt e.g. look for crashes in $sentry",
-      "messageId": "settings.automations.promptPlaceholder"
-    },
-    {
-      "description": "Button label for deleting an automation",
-      "key": "delete",
-      "message": "Delete",
-      "messageId": "settings.automations.delete"
-    },
-    {
-      "description": "Aria label for execution environment dropdown",
-      "key": "executionEnvironment.ariaLabel",
-      "message": "Execution environment",
-      "messageId": "settings.automations.executionEnvironment.ariaLabel"
-    },
-    {
-      "description": "Cancel button label for automations dialog",
-      "key": "cancel",
-      "message": "Cancel",
-      "messageId": "settings.automations.cancel"
-    },
-    {
-      "description": "Save button label for automations dialog",
-      "key": "save",
-      "message": "Save",
-      "messageId": "settings.automations.save"
-    },
-    {
-      "description": "Warning shown in the automation create modal when dangerous sandbox mode is enabled",
-      "key": "banner.danger",
-      "message": "Automations run with your default sandbox settings, which are currently set to Full Access. Running background automations with Full Access carries elevated risk, as Codex may modify files, run commands, and access network without asking. Consider updating sandbox settings to workspace write, and using <rulesDocsLink>rules</rulesDocsLink> to selectively define which commands the agent can run with full access.",
-      "messageId": "settings.automations.banner.danger"
-    },
-    {
-      "description": "Follow-up guidance shown in the automation create modal when default sandbox mode is read-only",
-      "key": "banner.defaultHowTo.readOnly",
-      "message": "Automations run with your default sandbox settings, which are set to read-only. Tool calls will fail if they require modifying files, accessing network, or working with apps on your computer. Consider updating sandbox settings to workspace write.",
-      "messageId": "settings.automations.banner.defaultHowTo.readOnly"
-    },
-    {
-      "description": "Follow-up guidance shown in the automation create modal when default sandbox mode is workspace write",
-      "key": "banner.defaultHowTo.default",
-      "message": "Automations run with your default sandbox settings. Tool calls will fail if they require modifying files outside the workspace, accessing network, or working with apps on your computer. You can selectively allowlist commands to run outside the sandbox using <rulesDocsLink>rules</rulesDocsLink>.",
-      "messageId": "settings.automations.banner.defaultHowTo.default"
+      "description": "Accessible label for the heartbeat interval minutes input",
+      "key": "scheduleIntervalMinutes",
+      "message": "Interval minutes",
+      "messageId": "settings.automations.scheduleIntervalMinutes"
     },
     {
       "description": "Singular suffix label for the heartbeat automation interval minutes input",
@@ -400,36 +474,6 @@
       "messageId": "settings.automations.scheduleIntervalMinutesSuffix"
     },
     {
-      "description": "Suffix label for the automation interval hours input",
-      "key": "scheduleIntervalHoursSuffix",
-      "message": "hours",
-      "messageId": "settings.automations.scheduleIntervalHoursSuffix"
-    },
-    {
-      "description": "Accessible label for the heartbeat interval minutes input",
-      "key": "scheduleIntervalMinutes",
-      "message": "Interval minutes",
-      "messageId": "settings.automations.scheduleIntervalMinutes"
-    },
-    {
-      "description": "Accessible label for the automation interval hours input",
-      "key": "scheduleIntervalHours",
-      "message": "Interval hours",
-      "messageId": "settings.automations.scheduleIntervalHours"
-    },
-    {
-      "description": "Header label above automation schedule controls",
-      "key": "schedulePopoverTitle",
-      "message": "Schedule",
-      "messageId": "settings.automations.schedulePopoverTitle"
-    },
-    {
-      "description": "Aria label for schedule type dropdown",
-      "key": "scheduleModeLabel",
-      "message": "Schedule type",
-      "messageId": "settings.automations.scheduleModeLabel"
-    },
-    {
       "description": "Label for the automation interval input",
       "key": "scheduleIntervalLabel",
       "message": "Every",
@@ -437,15 +481,99 @@
     },
     {
       "description": "Accessible label for the weekly automation day selector",
-      "key": "scheduleWeekday",
-      "message": "Day",
-      "messageId": "settings.automations.scheduleWeekday"
+      "key": "inbox.automations.scheduleWeekday.ariaLabel",
+      "message": "Day of the week",
+      "messageId": "inbox.automations.scheduleWeekday.ariaLabel"
     },
     {
-      "description": "Accessible label for the custom RRULE automation schedule editor",
-      "key": "scheduleCustomLabel",
-      "message": "Custom RRULE",
-      "messageId": "settings.automations.scheduleCustomLabel"
+      "description": "Label for the scheduled task weekday row",
+      "key": "inbox.automations.day.label",
+      "message": "On",
+      "messageId": "inbox.automations.day.label"
+    },
+    {
+      "description": "Label for the scheduled task time row",
+      "key": "inbox.automations.time.label",
+      "message": "At",
+      "messageId": "inbox.automations.time.label"
+    },
+    {
+      "description": "Accessible label for the custom scheduled task frequency selector",
+      "key": "inbox.automations.customFrequency.ariaLabel",
+      "message": "Repeat frequency",
+      "messageId": "inbox.automations.customFrequency.ariaLabel"
+    },
+    {
+      "description": "Label for the custom schedule frequency row",
+      "key": "inbox.automations.customFrequency.label",
+      "message": "Repeats",
+      "messageId": "inbox.automations.customFrequency.label"
+    },
+    {
+      "description": "Accessible label for the custom schedule interval input",
+      "key": "inbox.automations.customInterval.ariaLabel",
+      "message": "Repeat interval",
+      "messageId": "inbox.automations.customInterval.ariaLabel"
+    },
+    {
+      "description": "Label for the custom schedule interval row",
+      "key": "inbox.automations.customInterval.label",
+      "message": "Every",
+      "messageId": "inbox.automations.customInterval.label"
+    },
+    {
+      "description": "Label for the custom schedule weekdays row",
+      "key": "inbox.automations.customWeekdays.label",
+      "message": "On",
+      "messageId": "inbox.automations.customWeekdays.label"
+    },
+    {
+      "description": "Accessible label for the custom schedule month selector",
+      "key": "inbox.automations.customMonth.ariaLabel",
+      "message": "Month",
+      "messageId": "inbox.automations.customMonth.ariaLabel"
+    },
+    {
+      "description": "Label for the custom schedule month row",
+      "key": "inbox.automations.customMonth.label",
+      "message": "In",
+      "messageId": "inbox.automations.customMonth.label"
+    },
+    {
+      "description": "Label for the custom schedule days of month row",
+      "key": "inbox.automations.customMonthDay.label",
+      "message": "On days",
+      "messageId": "inbox.automations.customMonthDay.label"
+    },
+    {
+      "description": "Accessible label for the custom hourly schedule minute input",
+      "key": "inbox.automations.customMinute.ariaLabel",
+      "message": "Minute past the hour",
+      "messageId": "inbox.automations.customMinute.ariaLabel"
+    },
+    {
+      "description": "Label for the custom hourly schedule minute row",
+      "key": "inbox.automations.customMinute.label",
+      "message": "At minute",
+      "messageId": "inbox.automations.customMinute.label"
+    },
+    {
+      "description": "Title of the custom schedule RRULE dialog",
+      "key": "inbox.automations.scheduleRule.title",
+      "message": "Edit schedule rule",
+      "messageId": "inbox.automations.scheduleRule.title"
+    },
+    {
+      "description": "Description of the custom schedule RRULE dialog",
+      "key": "inbox.automations.scheduleRule.description",
+      "message": "Use an RRULE to define a custom schedule",
+      "messageId": "inbox.automations.scheduleRule.description"
+    },
+    {
+      "description": "Label for the custom schedule RRULE input",
+      "key": "inbox.automations.scheduleRule.inputLabel",
+      "message": "RRULE",
+      "messageId": "inbox.automations.scheduleRule.inputLabel"
     },
     {
       "description": "Placeholder text for the custom automation RRULE editor",
@@ -454,136 +582,82 @@
       "messageId": "settings.automations.scheduleCustomPlaceholder"
     },
     {
-      "description": "Accessible label for the automation schedule time input",
-      "key": "scheduleTime",
-      "message": "Time",
-      "messageId": "settings.automations.scheduleTime"
+      "description": "Validation error shown for an invalid custom schedule RRULE",
+      "key": "inbox.automations.scheduleRule.invalid",
+      "message": "Enter a valid RRULE",
+      "messageId": "inbox.automations.scheduleRule.invalid"
     },
     {
-      "description": "Accessible label for closing the schedule time picker",
-      "key": "hideTimePicker",
-      "message": "Hide time picker",
-      "messageId": "settings.automations.hideTimePicker"
+      "description": "Button label for closing the schedule rule dialog without saving",
+      "key": "inbox.automations.scheduleRule.cancel",
+      "message": "Cancel",
+      "messageId": "inbox.automations.scheduleRule.cancel"
     },
     {
-      "description": "Accessible label for opening the schedule time picker",
-      "key": "showTimePicker",
-      "message": "Show time picker",
-      "messageId": "settings.automations.showTimePicker"
+      "description": "Button label for saving a custom schedule RRULE",
+      "key": "inbox.automations.scheduleRule.save",
+      "message": "Save",
+      "messageId": "inbox.automations.scheduleRule.save"
     },
     {
-      "description": "Accessible label for selecting a time in the schedule time picker",
-      "key": "timePicker.setTime",
-      "message": "Set time to {time}",
-      "messageId": "settings.automations.timePicker.setTime"
+      "description": "Custom scheduled task frequency option for hours",
+      "key": "inbox.automations.customFrequency.hourly",
+      "message": "Hourly",
+      "messageId": "inbox.automations.customFrequency.hourly"
     },
     {
-      "description": "Fallback label when RRULE summary cannot be generated",
-      "key": "rruleSummaryFallback",
-      "message": "Custom schedule",
-      "messageId": "settings.automations.rruleSummaryFallback"
+      "description": "Custom scheduled task frequency option for days",
+      "key": "inbox.automations.customFrequency.daily",
+      "message": "Daily",
+      "messageId": "inbox.automations.customFrequency.daily"
     },
     {
-      "description": "Aria label for automation model dropdown",
-      "key": "model.ariaLabel",
-      "message": "Model",
-      "messageId": "settings.automations.model.ariaLabel"
+      "description": "Custom scheduled task frequency option for weeks",
+      "key": "inbox.automations.customFrequency.weekly",
+      "message": "Weekly",
+      "messageId": "inbox.automations.customFrequency.weekly"
     },
     {
-      "description": "Fallback label while automation model options are loading",
-      "key": "model.loading",
-      "message": "Loading model",
-      "messageId": "settings.automations.model.loading"
+      "description": "Custom scheduled task frequency option for months",
+      "key": "inbox.automations.customFrequency.monthly",
+      "message": "Monthly",
+      "messageId": "inbox.automations.customFrequency.monthly"
     },
     {
-      "description": "Header label above automation model options",
-      "key": "model.title",
-      "message": "Model",
-      "messageId": "settings.automations.model.title"
+      "description": "Custom scheduled task frequency option for years",
+      "key": "inbox.automations.customFrequency.yearly",
+      "message": "Yearly",
+      "messageId": "inbox.automations.customFrequency.yearly"
     },
     {
-      "description": "Fallback label while automation reasoning options are loading",
-      "key": "reasoning.loading",
-      "message": "Loading reasoning",
-      "messageId": "settings.automations.reasoning.loading"
+      "description": "Unit shown after a custom hourly schedule interval",
+      "key": "inbox.automations.customFrequencyUnit.hours",
+      "message": "{count, plural, one {hour} other {hours}}",
+      "messageId": "inbox.automations.customFrequencyUnit.hours"
     },
     {
-      "description": "Tooltip shown for the compact automation reasoning trigger",
-      "key": "reasoning.compactTooltip",
-      "message": "{reasoning} reasoning",
-      "messageId": "settings.automations.reasoning.compactTooltip"
+      "description": "Unit shown after a custom daily schedule interval",
+      "key": "inbox.automations.customFrequencyUnit.days",
+      "message": "{count, plural, one {day} other {days}}",
+      "messageId": "inbox.automations.customFrequencyUnit.days"
     },
     {
-      "description": "Aria label for automation reasoning effort dropdown",
-      "key": "reasoning.ariaLabel",
-      "message": "Reasoning",
-      "messageId": "settings.automations.reasoning.ariaLabel"
+      "description": "Unit shown after a custom weekly schedule interval",
+      "key": "inbox.automations.customFrequencyUnit.weeks",
+      "message": "{count, plural, one {week} other {weeks}}",
+      "messageId": "inbox.automations.customFrequencyUnit.weeks"
     },
     {
-      "description": "Header label above automation reasoning options",
-      "key": "reasoning.title",
-      "message": "Reasoning",
-      "messageId": "settings.automations.reasoning.title"
+      "description": "Unit shown after a custom monthly schedule interval",
+      "key": "inbox.automations.customFrequencyUnit.months",
+      "message": "{count, plural, one {month} other {months}}",
+      "messageId": "inbox.automations.customFrequencyUnit.months"
     },
     {
-      "description": "Placeholder for heartbeat automation thread selector",
-      "key": "heartbeatThread.placeholder",
-      "message": "Choose a pinned chat",
-      "messageId": "settings.automations.heartbeatThread.placeholder"
-    },
-    {
-      "description": "Aria label for heartbeat automation thread selector",
-      "key": "heartbeatThread.ariaLabel",
-      "message": "Target chat",
-      "messageId": "settings.automations.heartbeatThread.ariaLabel"
-    },
-    {
-      "description": "Header label above heartbeat automation thread options",
-      "key": "heartbeatThread.title",
-      "message": "Target chat",
-      "messageId": "settings.automations.heartbeatThread.title"
-    },
-    {
-      "description": "Label for a selected heartbeat thread that is no longer pinned",
-      "key": "heartbeatThread.unpinned",
-      "message": "unpinned",
-      "messageId": "settings.automations.heartbeatThread.unpinned"
-    },
-    {
-      "description": "Empty-state label when no pinned local threads are available for heartbeat automations",
-      "key": "heartbeatThread.empty",
-      "message": "Pin a local chat first to use heartbeat automations",
-      "messageId": "settings.automations.heartbeatThread.empty"
-    },
-    {
-      "description": "Tooltip shown for the compact automation execution environment trigger",
-      "key": "executionEnvironment.compactTooltip",
-      "message": "Run in {environment}",
-      "messageId": "settings.automations.executionEnvironment.compactTooltip"
-    },
-    {
-      "description": "Header label above automation execution environment options",
-      "key": "executionEnvironment.menuTitle",
-      "message": "Run in",
-      "messageId": "settings.automations.executionEnvironment.menuTitle"
-    },
-    {
-      "description": "Button label for running an automation immediately",
-      "key": "runNow",
-      "message": "Run now",
-      "messageId": "settings.automations.runNow"
-    },
-    {
-      "description": "Label for selecting the chats target in the automation project dropdown",
-      "key": "projectDropdown.projectless",
-      "message": "Chats",
-      "messageId": "settings.automations.projectDropdown.projectless"
-    },
-    {
-      "description": "Header title for a new automation before it is named",
-      "key": "dialog.newTitle",
-      "message": "New automation",
-      "messageId": "settings.automations.dialog.newTitle"
+      "description": "Unit shown after a custom yearly schedule interval",
+      "key": "inbox.automations.customFrequencyUnit.years",
+      "message": "{count, plural, one {year} other {years}}",
+      "messageId": "inbox.automations.customFrequencyUnit.years"
     },
     {
       "description": "Placeholder text for automation project dropdown",
@@ -592,34 +666,886 @@
       "messageId": "settings.automations.projectDropdown.placeholder"
     },
     {
-      "description": "Button label for creating a new automation",
-      "key": "create",
+      "description": "Tooltip explaining why scheduled task project options only include local projects when remote connections are connected",
+      "key": "projectDropdown.localOnlyTooltip",
+      "message": "Scheduled tasks can only be created for local projects",
+      "messageId": "settings.automations.projectDropdown.localOnlyTooltip"
+    },
+    {
+      "description": "Section label above the automation details rail",
+      "key": "inbox.automations.details",
+      "message": "Details",
+      "messageId": "inbox.automations.details"
+    },
+    {
+      "description": "Label for choosing whether a scheduled task runs in a new or existing task",
+      "key": "inbox.automations.destination.label",
+      "message": "Runs in",
+      "messageId": "inbox.automations.destination.label"
+    },
+    {
+      "description": "Label for the heartbeat automation target task row in the details rail",
+      "key": "inbox.automations.targetThread.label",
+      "message": "Task",
+      "messageId": "inbox.automations.targetThread.label"
+    },
+    {
+      "description": "Label for selecting no project in the automation project dropdown",
+      "key": "projectDropdown.none",
+      "message": "None",
+      "messageId": "settings.automations.projectDropdown.none"
+    },
+    {
+      "description": "Label for the automation folder row in the details rail",
+      "key": "inbox.automations.folder.label",
+      "message": "Project",
+      "messageId": "inbox.automations.folder.label"
+    },
+    {
+      "description": "Label for the automation model row in the details rail",
+      "key": "inbox.automations.model.label",
+      "message": "Model",
+      "messageId": "inbox.automations.model.label"
+    },
+    {
+      "description": "Label for the automation reasoning level row in the details rail",
+      "key": "inbox.automations.reasoning.label",
+      "message": "Reasoning",
+      "messageId": "inbox.automations.reasoning.label"
+    },
+    {
+      "description": "Tooltip on the disabled automation create button combining all missing requirements",
+      "key": "saveTooltip.combined.create",
+      "message": "{requirements} to create",
+      "messageId": "settings.automations.saveTooltip.combined.create"
+    },
+    {
+      "description": "Tooltip on the disabled automation save button combining all missing requirements",
+      "key": "saveTooltip.combined.save",
+      "message": "{requirements} to save",
+      "messageId": "settings.automations.saveTooltip.combined.save"
+    },
+    {
+      "description": "Tooltip requirement shown first when the automation title is missing",
+      "key": "saveTooltip.name.initialAdd",
+      "message": "Add a title",
+      "messageId": "settings.automations.saveTooltip.name.initialAdd"
+    },
+    {
+      "description": "Tooltip requirement shown after the first item when the automation title is missing",
+      "key": "saveTooltip.name.continuationAdd",
+      "message": "add a title",
+      "messageId": "settings.automations.saveTooltip.name.continuationAdd"
+    },
+    {
+      "description": "Tooltip requirement shown first when the automation prompt is missing",
+      "key": "saveTooltip.prompt.initialArticle",
+      "message": "Add a prompt",
+      "messageId": "settings.automations.saveTooltip.prompt.initialArticle"
+    },
+    {
+      "description": "Tooltip requirement shown after the first item when the automation prompt is missing",
+      "key": "saveTooltip.prompt.continuationArticle",
+      "message": "add a prompt",
+      "messageId": "settings.automations.saveTooltip.prompt.continuationArticle"
+    },
+    {
+      "description": "Tooltip requirement shown first when the heartbeat automation task selection is missing",
+      "key": "saveTooltip.thread.initialArticle",
+      "message": "Select a task",
+      "messageId": "settings.automations.saveTooltip.thread.initialArticle"
+    },
+    {
+      "description": "Tooltip requirement shown after the first item when the heartbeat automation task selection is missing",
+      "key": "saveTooltip.thread.continuationArticle",
+      "message": "select a task",
+      "messageId": "settings.automations.saveTooltip.thread.continuationArticle"
+    },
+    {
+      "description": "Tooltip requirement shown first when the automation execution environment is missing",
+      "key": "saveTooltip.executionEnvironment.initial",
+      "message": "Choose where to run it",
+      "messageId": "settings.automations.saveTooltip.executionEnvironment.initial"
+    },
+    {
+      "description": "Tooltip requirement shown after the first item when the automation execution environment is missing",
+      "key": "saveTooltip.executionEnvironment.continuation",
+      "message": "choose where to run it",
+      "messageId": "settings.automations.saveTooltip.executionEnvironment.continuation"
+    },
+    {
+      "description": "Tooltip requirement shown first when the automation model is missing",
+      "key": "saveTooltip.model.initial",
+      "message": "Choose a model",
+      "messageId": "settings.automations.saveTooltip.model.initial"
+    },
+    {
+      "description": "Tooltip requirement shown after the first item when the automation model is missing",
+      "key": "saveTooltip.model.continuation",
+      "message": "choose a model",
+      "messageId": "settings.automations.saveTooltip.model.continuation"
+    },
+    {
+      "description": "Tooltip requirement shown first when the automation schedule is invalid",
+      "key": "saveTooltip.schedule.initial",
+      "message": "Fix the schedule",
+      "messageId": "settings.automations.saveTooltip.schedule.initial"
+    },
+    {
+      "description": "Tooltip requirement shown after the first item when the automation schedule is invalid",
+      "key": "saveTooltip.schedule.continuation",
+      "message": "fix the schedule",
+      "messageId": "settings.automations.saveTooltip.schedule.continuation"
+    },
+    {
+      "description": "Cancel button label for the scheduled task editor",
+      "key": "automation.sidePanel.cancel",
+      "message": "Cancel",
+      "messageId": "automation.sidePanel.cancel"
+    },
+    {
+      "description": "Button label for accepting a suggested scheduled task",
+      "key": "automation.sidePanel.createSuggestion",
+      "message": "Create scheduled task",
+      "messageId": "automation.sidePanel.createSuggestion"
+    },
+    {
+      "description": "Button label for accepting a suggested scheduled task update",
+      "key": "automation.sidePanel.applySuggestion",
+      "message": "Apply changes",
+      "messageId": "automation.sidePanel.applySuggestion"
+    },
+    {
+      "description": "Button label for retrying a failed scheduled task save",
+      "key": "automation.sidePanel.retrySave",
+      "message": "Retry save",
+      "messageId": "automation.sidePanel.retrySave"
+    },
+    {
+      "description": "Button label for opening scheduled task settings from the task side panel",
+      "key": "automation.sidePanel.openScheduledTask",
+      "message": "Open settings",
+      "messageId": "automation.sidePanel.openScheduledTask"
+    },
+    {
+      "description": "Toast title when saving a scheduled task fails",
+      "key": "inbox.automations.saveError",
+      "message": "Could not save scheduled task",
+      "messageId": "inbox.automations.saveError"
+    },
+    {
+      "description": "Title shown when a scheduled task side panel points to a missing scheduled task",
+      "key": "automation.sidePanel.missingTitleUnavailable",
+      "message": "Scheduled task unavailable",
+      "messageId": "automation.sidePanel.missingTitleUnavailable"
+    },
+    {
+      "description": "Description shown when a scheduled task side panel points to a missing scheduled task",
+      "key": "automation.sidePanel.missingDescriptionDevice",
+      "message": "This scheduled task may have been deleted or is no longer available on this device",
+      "messageId": "automation.sidePanel.missingDescriptionDevice"
+    },
+    {
+      "description": "Fallback label when RRULE summary cannot be generated",
+      "key": "rruleSummaryFallback",
+      "message": "Custom schedule",
+      "messageId": "settings.automations.rruleSummaryFallback"
+    },
+    {
+      "description": "Loading state for workflows list",
+      "key": "loading",
+      "message": "Loading…",
+      "messageId": "settings.automations.loading"
+    },
+    {
+      "description": "Fallback title when scheduled task name is missing",
+      "key": "automation.updateDirective.untitled",
+      "message": "Untitled scheduled task",
+      "messageId": "automation.updateDirective.untitled"
+    },
+    {
+      "description": "Button label for opening an automation from a task message",
+      "key": "automation.updateDirective.open",
+      "message": "Open",
+      "messageId": "automation.updateDirective.open"
+    },
+    {
+      "description": "Action label for an automation citation after creating an automation",
+      "key": "automation.updateDirective.created",
+      "message": "Created",
+      "messageId": "automation.updateDirective.created"
+    },
+    {
+      "description": "Action label for an automation citation after updating an automation",
+      "key": "automation.updateDirective.updated",
+      "message": "Updated",
+      "messageId": "automation.updateDirective.updated"
+    },
+    {
+      "description": "Action label for an automation citation when the automation was already missing",
+      "key": "automation.updateDirective.missing",
+      "message": "Missing",
+      "messageId": "automation.updateDirective.missing"
+    },
+    {
+      "description": "Action label for an automation citation after deleting an automation",
+      "key": "automation.updateDirective.deleted",
+      "message": "Deleted",
+      "messageId": "automation.updateDirective.deleted"
+    },
+    {
+      "description": "Action label for an automation citation that proposes creating an automation",
+      "key": "automation.updateDirective.proposed",
+      "message": "Proposed",
+      "messageId": "automation.updateDirective.proposed"
+    },
+    {
+      "description": "Action label for an automation citation that proposes updating an automation",
+      "key": "automation.updateDirective.proposedUpdate",
+      "message": "Proposed update",
+      "messageId": "automation.updateDirective.proposedUpdate"
+    },
+    {
+      "description": "Generic action label for a scheduled task citation",
+      "key": "automation.updateDirective.automation",
+      "message": "Scheduled task",
+      "messageId": "automation.updateDirective.automation"
+    },
+    {
+      "description": "Onboarding checklist item in the sidebar",
+      "key": "sidebarOnboardingChecklist.createAutomation",
+      "message": "Set up a daily update",
+      "messageId": "sidebarOnboardingChecklist.createAutomation"
+    },
+    {
+      "description": "Composer prefill prompt for the daily update automation onboarding checklist item",
+      "key": "sidebarOnboardingChecklist.createAutomation.providerPrompt",
+      "message": "Create a Scheduled Task called \"Weekday Morning Brief\" that runs every weekday at 7:30 AM in my local time zone.\n\nFirst, make a lightweight read from {chatApp} and {mailApp}. If either needs access, open its connection flow instead of asking me to connect in chat. Once connected, retry and continue.\n\nOnce both sources are connected, generate today's real brief immediately using live connected sources. If live source data is unavailable, say which source is unavailable instead of generating a dummy brief.\n\nFor the first-run output only, start with a short, celebratory confirmation that I've created my first Scheduled Task. Briefly explain what a Scheduled Task is and summarize this task's name, schedule, timezone, and connected sources in a clear, polished format. Then transition into today's brief. Keep this introduction concise, and do not repeat it on future runs.\n\nFor each run:\n- Search since the last successful run, or the past 3 days if this is the first run.\n- Do not rescan older items unless needed to understand a thread, document, or citation.\n- For {mailApp}, search the primary inbox only. Exclude junk, deleted items, and promotional or social categories.\n- For {chatApp}, prioritize DMs, mentions, threads I'm in, and high-signal channels only.\n- Stop once you have enough candidates to identify the top 3–5 important items.\n- Do not perform exhaustive searches.\n- Do not show connector checks, tool details, search notes, or process commentary.\n- Return exactly one final response when done.\n\nBrief format:\n\n# Morning Brief\n\n## Key items\n- Include only the top 3–5 items likely to need attention today.\n- Combine {chatApp} and {mailApp} into one list.\n- For each item, include: what it is, why it matters, suggested action, urgency, and a direct link or citation.\n\n## Later / FYI\n- Optional, max 3 bullets, only if useful.\n\nIf there are no important items in the lookback window, say: \"No urgent items found.\"\n\nKeep it fast, concise, and skimmable. No calendar section. No process notes.",
+      "messageId": "sidebarOnboardingChecklist.createAutomation.providerPrompt"
+    },
+    {
+      "description": "Menu item to mark every unread automation run as read",
+      "key": "sidebarElectron.automationsMarkAllRead",
+      "message": "Mark all as read",
+      "messageId": "sidebarElectron.automationsMarkAllRead"
+    },
+    {
+      "description": "Toast shown when a worktree conversation starts but creating its heartbeat automation fails",
+      "key": "worktreeInitV2.heartbeatAutomationError",
+      "message": "Started task, but could not create the heartbeat",
+      "messageId": "worktreeInitV2.heartbeatAutomationError"
+    },
+    {
+      "description": "Fallback label when an automation does not have a next run time",
+      "key": "inbox.automations.nextRun.none",
+      "message": "Not scheduled",
+      "messageId": "inbox.automations.nextRun.none"
+    },
+    {
+      "description": "Relative next-run label for a time later today",
+      "key": "inbox.automations.relativeDate.today",
+      "message": "Today at {time}",
+      "messageId": "inbox.automations.relativeDate.today"
+    },
+    {
+      "description": "Relative next-run label for a time tomorrow",
+      "key": "inbox.automations.relativeDate.tomorrow",
+      "message": "Tomorrow at {time}",
+      "messageId": "inbox.automations.relativeDate.tomorrow"
+    },
+    {
+      "description": "Relative next-run label for a day later this week",
+      "key": "inbox.automations.relativeDate.weekday",
+      "message": "{weekday} at {time}",
+      "messageId": "inbox.automations.relativeDate.weekday"
+    },
+    {
+      "description": "Accessible label for the scheduled task run icon",
+      "key": "codex.localTaskRow.automation",
+      "message": "Scheduled task run",
+      "messageId": "codex.localTaskRow.automation"
+    },
+    {
+      "description": "Accessible label for the scheduled task icon shown on a task with an attached scheduled task",
+      "key": "codex.localTaskRow.attachedHeartbeatAutomation",
+      "message": "Scheduled task attached",
+      "messageId": "codex.localTaskRow.attachedHeartbeatAutomation"
+    },
+    {
+      "description": "Tooltip shown on the heartbeat automation icon for a sidebar thread row",
+      "key": "sidebarTaskRow.heartbeatAutomation.nextRun",
+      "message": "Next run: {nextRunLabel}",
+      "messageId": "sidebarTaskRow.heartbeatAutomation.nextRun"
+    },
+    {
+      "description": "Button label for creating a scheduled task",
+      "key": "inbox.automations.create",
       "message": "Create",
-      "messageId": "settings.automations.create"
+      "messageId": "inbox.automations.create"
+    },
+    {
+      "description": "Menu item for opening the manual scheduled task editor",
+      "key": "inbox.automations.createMenu.setUpManually",
+      "message": "Set up manually",
+      "messageId": "inbox.automations.createMenu.setUpManually"
+    },
+    {
+      "description": "Button label for creating a scheduled task from the side panel",
+      "key": "automation.sidePanel.create",
+      "message": "Create scheduled task",
+      "messageId": "automation.sidePanel.create"
+    },
+    {
+      "description": "Menu item for creating a scheduled task by chatting with ChatGPT",
+      "key": "inbox.automations.createWithChatGPT",
+      "message": "Create with ChatGPT",
+      "messageId": "inbox.automations.createWithChatGPT"
+    },
+    {
+      "description": "Button label for personalizing a scheduled task template by chatting with ChatGPT",
+      "key": "automation.sidePanel.personalizeWithChatGPT",
+      "message": "Personalize with ChatGPT",
+      "messageId": "automation.sidePanel.personalizeWithChatGPT"
+    },
+    {
+      "description": "Aria label for the scheduled task creation dropdown button",
+      "key": "inbox.automations.createMenu.options",
+      "message": "Create scheduled task options",
+      "messageId": "inbox.automations.createMenu.options"
+    },
+    {
+      "description": "Accessible label for immediately adding a suggested scheduled task",
+      "key": "inbox.automations.emptySuggestion.add",
+      "message": "Add {name} scheduled task",
+      "messageId": "inbox.automations.emptySuggestion.add"
+    },
+    {
+      "description": "Heading above suggested scheduled task templates",
+      "key": "inbox.automations.suggestions",
+      "message": "Suggestions",
+      "messageId": "inbox.automations.suggestions"
+    },
+    {
+      "description": "Suggested automation button label",
+      "key": "inbox.automations.emptySuggestion.dailyBrief",
+      "message": "Daily brief",
+      "messageId": "inbox.automations.emptySuggestion.dailyBrief"
+    },
+    {
+      "description": "Description of the daily brief automation example",
+      "key": "inbox.automations.emptySuggestion.dailyBrief.description",
+      "message": "Start each weekday with a summary of your calendar, unread email, and priorities",
+      "messageId": "inbox.automations.emptySuggestion.dailyBrief.description"
+    },
+    {
+      "description": "Task prompt for the daily brief automation example",
+      "key": "inbox.automations.emptySuggestion.dailyBrief.taskPrompt",
+      "message": "Give me a morning brief with what's on my calendar, important unread emails, and anything that needs my attention today.",
+      "messageId": "inbox.automations.emptySuggestion.dailyBrief.taskPrompt"
+    },
+    {
+      "description": "Suggested automation button label",
+      "key": "inbox.automations.emptySuggestion.weeklyReview",
+      "message": "Weekly review",
+      "messageId": "inbox.automations.emptySuggestion.weeklyReview"
+    },
+    {
+      "description": "Description of the weekly review automation example",
+      "key": "inbox.automations.emptySuggestion.weeklyReview.description",
+      "message": "Turn your recent work into a concise status update every Friday",
+      "messageId": "inbox.automations.emptySuggestion.weeklyReview.description"
+    },
+    {
+      "description": "Task prompt for the weekly review automation example",
+      "key": "inbox.automations.emptySuggestion.weeklyReview.taskPrompt",
+      "message": "Review what I worked on this week and draft a short status update.",
+      "messageId": "inbox.automations.emptySuggestion.weeklyReview.taskPrompt"
+    },
+    {
+      "description": "Suggested automation button label",
+      "key": "inbox.automations.emptySuggestion.followUpMonitor",
+      "message": "Follow-up monitor",
+      "messageId": "inbox.automations.emptySuggestion.followUpMonitor"
+    },
+    {
+      "description": "Description of the follow-up monitor automation example",
+      "key": "inbox.automations.emptySuggestion.followUpMonitor.description",
+      "message": "Review recent email and calendar activity and flag anything that needs your attention",
+      "messageId": "inbox.automations.emptySuggestion.followUpMonitor.description"
+    },
+    {
+      "description": "Task prompt for the follow-up monitor automation example",
+      "key": "inbox.automations.emptySuggestion.followUpMonitor.taskPrompt",
+      "message": "Review recent email and calendar activity, highlight meaningful changes, and flag anything that needs my attention.",
+      "messageId": "inbox.automations.emptySuggestion.followUpMonitor.taskPrompt"
+    },
+    {
+      "description": "Aria label for the automation history actions dropdown trigger",
+      "key": "inbox.automations.history.actions",
+      "message": "Previous run actions",
+      "messageId": "inbox.automations.history.actions"
+    },
+    {
+      "description": "Dropdown menu item to mark all automation runs as read",
+      "key": "inbox.automations.history.markAllRead",
+      "message": "Mark all as read",
+      "messageId": "inbox.automations.history.markAllRead"
+    },
+    {
+      "description": "Dropdown menu item to archive all automation runs",
+      "key": "inbox.automations.history.archiveAll",
+      "message": "Archive all",
+      "messageId": "inbox.automations.history.archiveAll"
+    },
+    {
+      "description": "Confirmation title for archiving automation runs",
+      "key": "inbox.automations.history.archiveAllConfirmTitleNatural",
+      "message": "{count, plural, one {Archive this run?} other {Archive # runs?}}",
+      "messageId": "inbox.automations.history.archiveAllConfirmTitleNatural"
+    },
+    {
+      "description": "Confirmation subtitle for archiving automation runs",
+      "key": "inbox.automations.history.archiveAllConfirmSubtitleNatural",
+      "message": "{count, plural, one {You can find this run’s task later in archived tasks} other {You can find these runs’ tasks later in archived tasks}}",
+      "messageId": "inbox.automations.history.archiveAllConfirmSubtitleNatural"
+    },
+    {
+      "description": "Cancel button label for archiving automation runs",
+      "key": "inbox.automations.history.archiveAllCancel",
+      "message": "Cancel",
+      "messageId": "inbox.automations.history.archiveAllCancel"
+    },
+    {
+      "description": "Confirm button label for archiving automation runs",
+      "key": "inbox.automations.history.archiveAllConfirm",
+      "message": "{count, plural, one {Archive} other {Archive all}}",
+      "messageId": "inbox.automations.history.archiveAllConfirm"
+    },
+    {
+      "description": "Composer prefill prompt for creating a scheduled task by chatting with ChatGPT",
+      "key": "inbox.automations.createWithChatGPT.prompt",
+      "message": "Let's set up a scheduled task together. First, explain how scheduled tasks work in ChatGPT. Then interview me to figure out what I need scheduled and when it should run.",
+      "messageId": "inbox.automations.createWithChatGPT.prompt"
+    },
+    {
+      "description": "Fallback schedule included in the task prompt for personalizing a scheduled task template",
+      "key": "inbox.automations.personalizeTemplate.customSchedule",
+      "message": "Custom schedule",
+      "messageId": "inbox.automations.personalizeTemplate.customSchedule"
+    },
+    {
+      "description": "Accessible label for closing the scheduled task detail right sidebar",
+      "key": "inbox.automations.detailPanel.collapseDetailsAriaLabel",
+      "message": "Collapse details",
+      "messageId": "inbox.automations.detailPanel.collapseDetailsAriaLabel"
+    },
+    {
+      "description": "Action label to unarchive an automation history task",
+      "key": "inbox.automations.history.unarchive",
+      "message": "Unarchive",
+      "messageId": "inbox.automations.history.unarchive"
+    },
+    {
+      "description": "Summary label for heartbeat automations in the automation list",
+      "key": "inbox.automations.rowSummary.heartbeat",
+      "message": "Heartbeat • {thread}",
+      "messageId": "inbox.automations.rowSummary.heartbeat"
+    },
+    {
+      "description": "Accessible label for the app and plugin logos mentioned by a scheduled task",
+      "key": "inbox.automations.mentionedSources",
+      "message": "Uses {sources}",
+      "messageId": "inbox.automations.mentionedSources"
+    },
+    {
+      "description": "Label for an automation that is currently running",
+      "key": "inbox.automations.inProgress",
+      "message": "In progress",
+      "messageId": "inbox.automations.inProgress"
+    },
+    {
+      "description": "Label before the relative time until the next scheduled task run",
+      "key": "inbox.automations.nextRunRelative",
+      "message": "Next run",
+      "messageId": "inbox.automations.nextRunRelative"
+    },
+    {
+      "description": "Accessible separator before a scheduled task's relative next run time",
+      "key": "inbox.automations.nextRunRelativeSeparator",
+      "message": ", ",
+      "messageId": "inbox.automations.nextRunRelativeSeparator"
+    },
+    {
+      "description": "Accessible status appended to a paused scheduled task's schedule",
+      "key": "inbox.automations.pausedRowDescription",
+      "message": ", Paused",
+      "messageId": "inbox.automations.pausedRowDescription"
+    },
+    {
+      "description": "Button label for running an automation immediately",
+      "key": "runNow",
+      "message": "Run now",
+      "messageId": "settings.automations.runNow"
+    },
+    {
+      "description": "Tooltip label for pausing an automation",
+      "key": "inbox.automations.pauseTooltip",
+      "message": "Pause",
+      "messageId": "inbox.automations.pauseTooltip"
+    },
+    {
+      "description": "Tooltip label for resuming an automation",
+      "key": "inbox.automations.resumeTooltip",
+      "message": "Resume",
+      "messageId": "inbox.automations.resumeTooltip"
+    },
+    {
+      "description": "Tooltip label for deleting an automation",
+      "key": "inbox.automations.deleteTooltip",
+      "message": "Delete",
+      "messageId": "inbox.automations.deleteTooltip"
+    },
+    {
+      "description": "Accessible label for a scheduled task's actions menu",
+      "key": "inbox.automations.moreActions",
+      "message": "Scheduled task actions",
+      "messageId": "inbox.automations.moreActions"
+    },
+    {
+      "description": "Accessible label and placeholder for searching scheduled tasks",
+      "key": "inbox.automations.search",
+      "message": "Search scheduled tasks",
+      "messageId": "inbox.automations.search"
+    },
+    {
+      "description": "Empty state title when no scheduled tasks match a search",
+      "key": "inbox.automations.search.emptyTitle",
+      "message": "No scheduled tasks found",
+      "messageId": "inbox.automations.search.emptyTitle"
+    },
+    {
+      "description": "Accessible label for filtering scheduled tasks by status",
+      "key": "inbox.automations.statusFilter.ariaLabel",
+      "message": "Scheduled task status",
+      "messageId": "inbox.automations.statusFilter.ariaLabel"
+    },
+    {
+      "description": "Filter option for all scheduled tasks",
+      "key": "inbox.automations.statusFilter.all",
+      "message": "All",
+      "messageId": "inbox.automations.statusFilter.all"
+    },
+    {
+      "description": "Filter option for active scheduled tasks",
+      "key": "inbox.automations.statusFilter.active",
+      "message": "Active",
+      "messageId": "inbox.automations.statusFilter.active"
+    },
+    {
+      "description": "Filter option for paused scheduled tasks",
+      "key": "inbox.automations.statusFilter.paused",
+      "message": "Paused",
+      "messageId": "inbox.automations.statusFilter.paused"
+    },
+    {
+      "description": "Button to mark every unread scheduled task run as read",
+      "key": "inbox.automations.markAllRead",
+      "message": "Mark all as read",
+      "messageId": "inbox.automations.markAllRead"
+    },
+    {
+      "description": "Header label for the scheduled tasks view",
+      "key": "inbox.mode.automations",
+      "message": "Scheduled tasks",
+      "messageId": "inbox.mode.automations"
+    },
+    {
+      "description": "Subtitle shown at the top of the scheduled tasks page",
+      "key": "inbox.automations.subtitle",
+      "message": "Ask ChatGPT to schedule tasks, set reminders, or monitor for updates",
+      "messageId": "inbox.automations.subtitle"
+    },
+    {
+      "description": "Toast title when starting a scheduled task template personalization task fails",
+      "key": "inbox.automations.personalizeTemplate.startErrorChatGPT",
+      "message": "Could not start personalization with ChatGPT",
+      "messageId": "inbox.automations.personalizeTemplate.startErrorChatGPT"
+    },
+    {
+      "description": "Toast title when creating a scheduled task fails",
+      "key": "inbox.automations.createError",
+      "message": "Could not create scheduled task",
+      "messageId": "inbox.automations.createError"
+    },
+    {
+      "description": "Toast title when updating a scheduled task fails",
+      "key": "inbox.automations.updateError",
+      "message": "Could not update scheduled task",
+      "messageId": "inbox.automations.updateError"
+    },
+    {
+      "description": "Toast title when deleting a scheduled task fails",
+      "key": "inbox.automations.deleteError",
+      "message": "Could not delete scheduled task",
+      "messageId": "inbox.automations.deleteError"
+    },
+    {
+      "description": "Toast description when deleting an automation fails without a bridge error",
+      "key": "inbox.automations.deleteFailedTryAgain",
+      "message": "Try again",
+      "messageId": "inbox.automations.deleteFailedTryAgain"
+    },
+    {
+      "description": "Toast shown when a scheduled task is run immediately",
+      "key": "inbox.automations.runNowSuccess",
+      "message": "Scheduled task started",
+      "messageId": "inbox.automations.runNowSuccess"
+    },
+    {
+      "description": "Toast title when starting a scheduled task immediately fails",
+      "key": "inbox.automations.runNowError",
+      "message": "Could not start scheduled task",
+      "messageId": "inbox.automations.runNowError"
+    },
+    {
+      "description": "Accessible status while scheduled task details load",
+      "key": "inbox.automations.detailLoading",
+      "message": "Loading scheduled task details",
+      "messageId": "inbox.automations.detailLoading"
+    },
+    {
+      "description": "Title for the delete automation confirmation dialog",
+      "key": "inbox.automations.deleteConfirm.title",
+      "message": "Delete {name}?",
+      "messageId": "inbox.automations.deleteConfirm.title"
+    },
+    {
+      "description": "Header title for a new scheduled task before it is named",
+      "key": "dialog.newTitle",
+      "message": "New scheduled task",
+      "messageId": "settings.automations.dialog.newTitle"
+    },
+    {
+      "description": "Description for the delete scheduled task confirmation dialog",
+      "key": "inbox.automations.deleteConfirm.descriptionNoPeriod",
+      "message": "This will permanently delete the scheduled task and stop future runs",
+      "messageId": "inbox.automations.deleteConfirm.descriptionNoPeriod"
+    },
+    {
+      "description": "Cancel button label for delete automation confirmation dialog",
+      "key": "inbox.automations.deleteConfirm.cancel",
+      "message": "Cancel",
+      "messageId": "inbox.automations.deleteConfirm.cancel"
+    },
+    {
+      "description": "Confirm button label for delete scheduled task confirmation dialog",
+      "key": "inbox.automations.deleteConfirm.confirm",
+      "message": "Delete scheduled task",
+      "messageId": "inbox.automations.deleteConfirm.confirm"
+    },
+    {
+      "description": "Title for the confirmation dialog shown before discarding a scheduled task creation draft",
+      "key": "inbox.automations.discardDraft.title",
+      "message": "Discard scheduled task draft?",
+      "messageId": "inbox.automations.discardDraft.title"
+    },
+    {
+      "description": "Description for the confirmation dialog shown before discarding a scheduled task creation draft",
+      "key": "inbox.automations.discardDraft.description",
+      "message": "Your changes to this scheduled task will be lost",
+      "messageId": "inbox.automations.discardDraft.description"
+    },
+    {
+      "description": "Cancel button label for keeping a scheduled task creation draft",
+      "key": "inbox.automations.discardDraft.cancel",
+      "message": "Keep editing",
+      "messageId": "inbox.automations.discardDraft.cancel"
+    },
+    {
+      "description": "Confirm button label for discarding a scheduled task creation draft",
+      "key": "inbox.automations.discardDraft.confirm",
+      "message": "Discard",
+      "messageId": "inbox.automations.discardDraft.confirm"
+    },
+    {
+      "description": "Button label to return to the scheduled tasks list when a scheduled task detail page is missing",
+      "key": "inbox.automations.missingBackToScheduledTasks",
+      "message": "Back to scheduled tasks",
+      "messageId": "inbox.automations.missingBackToScheduledTasks"
+    },
+    {
+      "description": "Subtitle shown when a scheduled task detail page points to a missing scheduled task",
+      "key": "inbox.automations.missingSubtitleDevice",
+      "message": "This scheduled task may have been deleted or is no longer available on this device",
+      "messageId": "inbox.automations.missingSubtitleDevice"
+    },
+    {
+      "description": "Title shown when a scheduled task detail page points to a missing scheduled task",
+      "key": "inbox.automations.missingUnavailable",
+      "message": "Scheduled task unavailable",
+      "messageId": "inbox.automations.missingUnavailable"
+    },
+    {
+      "description": "Accessible status while scheduled tasks load",
+      "key": "inbox.automations.loading",
+      "message": "Loading…",
+      "messageId": "inbox.automations.loading"
+    },
+    {
+      "description": "Label for active automation status",
+      "key": "inbox.automations.status.active",
+      "message": "Active",
+      "messageId": "inbox.automations.status.active"
+    },
+    {
+      "description": "Label for paused automation status",
+      "key": "inbox.automations.status.paused",
+      "message": "Paused",
+      "messageId": "inbox.automations.status.paused"
+    },
+    {
+      "description": "Label for deleted automation status",
+      "key": "inbox.automations.status.deleted",
+      "message": "Deleted",
+      "messageId": "inbox.automations.status.deleted"
+    },
+    {
+      "description": "Button label for opening the task connected to a heartbeat automation",
+      "key": "inbox.automations.targetThread.open",
+      "message": "Open task",
+      "messageId": "inbox.automations.targetThread.open"
+    },
+    {
+      "description": "Error toast shown when unarchiving an automation history task fails",
+      "key": "inbox.automations.history.unarchiveError",
+      "message": "Failed to unarchive task",
+      "messageId": "inbox.automations.history.unarchiveError"
+    },
+    {
+      "description": "Error toast when an automation run fails to archive",
+      "key": "inbox.automations.history.archiveError",
+      "message": "Could not archive run",
+      "messageId": "inbox.automations.history.archiveError"
+    },
+    {
+      "description": "Section label above the automation history rail section",
+      "key": "inbox.automations.history",
+      "message": "Previous runs",
+      "messageId": "inbox.automations.history"
+    },
+    {
+      "description": "Success toast after archiving all automation runs",
+      "key": "inbox.automations.history.archiveAllSuccess",
+      "message": "Archived {count, plural, one {# run} other {# runs}}",
+      "messageId": "inbox.automations.history.archiveAllSuccess"
+    },
+    {
+      "description": "Error toast when some automation runs fail to archive",
+      "key": "inbox.automations.history.archiveAllPartialError",
+      "message": "Archived {succeededCount}; could not archive {failedCount}",
+      "messageId": "inbox.automations.history.archiveAllPartialError"
+    },
+    {
+      "description": "Fallback title for an automation history task without a title",
+      "key": "inbox.automations.history.untitled",
+      "message": "Untitled",
+      "messageId": "inbox.automations.history.untitled"
+    },
+    {
+      "description": "Tooltip shown for archived automation runs in the previous runs list",
+      "key": "inbox.automations.history.archivedTooltip",
+      "message": "Run was archived",
+      "messageId": "inbox.automations.history.archivedTooltip"
     },
     {
       "description": "Button label for retrying a failed automation save",
       "key": "saveRetry",
-      "message": "Save",
+      "message": "Retry save",
       "messageId": "settings.automations.saveRetry"
     },
     {
-      "description": "Aria label for resuming an automation",
+      "description": "Accessible label for the scheduled task actions menu",
+      "key": "actionsAria",
+      "message": "Scheduled task actions",
+      "messageId": "settings.automations.actionsAria"
+    },
+    {
+      "description": "Menu item for deleting a scheduled task",
+      "key": "delete",
+      "message": "Delete",
+      "messageId": "settings.automations.delete"
+    },
+    {
+      "description": "Aria label for resuming a scheduled task",
       "key": "resumeAria",
-      "message": "Resume automation",
+      "message": "Resume scheduled task",
       "messageId": "settings.automations.resumeAria"
     },
     {
-      "description": "Aria label for pausing an automation",
+      "description": "Aria label for pausing a scheduled task",
       "key": "pauseAria",
-      "message": "Pause automation",
+      "message": "Pause scheduled task",
       "messageId": "settings.automations.pauseAria"
     },
     {
-      "description": "Aria label for deleting an automation",
-      "key": "deleteAria",
-      "message": "Delete automation",
-      "messageId": "settings.automations.deleteAria"
+      "description": "Codex Micro action label for the TIME keycap",
+      "key": "settings.codexMicro.keycaps.automations",
+      "message": "Open Scheduled",
+      "messageId": "settings.codexMicro.keycaps.automations"
+    },
+    {
+      "description": "Project filter option showing archived scheduled task runs",
+      "key": "settings.dataControls.archivedChats.projectFilter.automations",
+      "message": "Scheduled tasks",
+      "messageId": "settings.dataControls.archivedChats.projectFilter.automations"
+    },
+    {
+      "description": "Accessible label for opening the scheduled task attached to the current thread",
+      "key": "localConversation.header.openHeartbeatAutomation",
+      "message": "Open scheduled task",
+      "messageId": "localConversation.header.openHeartbeatAutomation"
+    },
+    {
+      "description": "Tooltip shown on the thread header heartbeat automation button",
+      "key": "localConversation.header.heartbeatAutomationNextRun",
+      "message": "Next run: {nextRunLabel}",
+      "messageId": "localConversation.header.heartbeatAutomationNextRun"
+    },
+    {
+      "description": "Tooltip shown when pull request fix automations cannot be loaded",
+      "key": "localConversation.pullRequest.fix.automationsUnavailable",
+      "message": "Automatic fixes are unavailable right now",
+      "messageId": "localConversation.pullRequest.fix.automationsUnavailable"
+    },
+    {
+      "description": "Tooltip shown when pull request fix automations are unavailable for the current host",
+      "key": "localConversation.pullRequest.fix.unsupportedAutomationHost",
+      "message": "Automatic fixes are available for local projects in the desktop app",
+      "messageId": "localConversation.pullRequest.fix.unsupportedAutomationHost"
+    },
+    {
+      "description": "Tooltip shown on the heartbeat automation row in the thread summary panel",
+      "key": "codex.localConversation.heartbeatAutomation.nextRun",
+      "message": "Next run: {nextRunLabel}",
+      "messageId": "codex.localConversation.heartbeatAutomation.nextRun"
+    },
+    {
+      "description": "Accessible label for opening the active scheduled task from the thread summary panel",
+      "key": "codex.localConversation.heartbeatAutomation.open",
+      "message": "Open scheduled task",
+      "messageId": "codex.localConversation.heartbeatAutomation.open"
+    },
+    {
+      "description": "Title for the active scheduled task section in the thread summary side panel",
+      "key": "codex.localConversation.heartbeatAutomation.title",
+      "message": "Scheduled",
+      "messageId": "codex.localConversation.heartbeatAutomation.title"
+    },
+    {
+      "description": "Right panel tab title for a scheduled task created from a task",
+      "key": "localConversation.automation.newTabTitle",
+      "message": "New scheduled task",
+      "messageId": "localConversation.automation.newTabTitle"
     }
   ]
 }
